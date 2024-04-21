@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/20 00:14:17 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/20 17:01:16 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ char	*prompt(int status)
 	if (!prompt)
 		return (NULL);
 	input = readline(prompt);
+	add_history(input);
 	free(prompt);
 	return (input);
 }

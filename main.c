@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/20 00:33:40 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/21 16:54:33 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,35 @@ void	parsing(t_command *command, char *input)
 
 int	loop(char **env)
 {
-	int			status;
 	t_command   command;
 	char        *input;
 
-	status = 0;
+	command.status = 0;
 	while (1)
 	{
-		input = prompt(status);
+		input = prompt(command.status);
 		if (!input)
 			return (1);
 		parsing(&command, input);
-		status = execute(&command, env, status);
+		command.status = execute(&command, env);
 		ft_free_tab(command.args);
 		free(command.cmd);
 		free(input);
-		if (status == -1)
-			return (status);
+		if (command.status == -1)
+			return (command.status);
 	}
-	return (0);
+	return (command.status);
 }
 
 int main(int argc, char **argv, char **env)
 {
+	int	status;
+	
 	(void)argc;
 	(void)argv;
+	status = 0;
 	// Cloner l'environnement
-	loop(env);
+	status = loop(env);
+
+	return (status);
 }

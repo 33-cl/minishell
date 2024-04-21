@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 15:41:19 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/18 15:42:13 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/20 16:14:24 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct s_list
 }	t_list;
 
 size_t	ft_strlen(const char *s);
+size_t	ft_tablen(char **tab);
 int		ft_atoi(const char *str);
 void	*ft_bzero(void *s, size_t n);
 int		ft_isalnum(int c);
