@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:30:04 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/21 17:12:20 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:55:30 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,40 @@
 // INFILE
 
 // OUTFILE
-static void	get_out(t_command *command)
+static int	get_out(t_command *command)
 {
 	size_t	i;
 	size_t	len_out;
 	int		fd;
+	char	type;
 
 	i = 0;
 	len_out = ft_tablen(command->redir.out);
-	if (len_out == 0);
-		return;
-	command->redir.out++;
-	fd = open(command->redir.out, O_RDWR | O_CREAT | O_TRUNC, 0000644);
-	if 
+	if (len_out == 0)
+		return (0);
+	type = command->redir.out[i][0];
+	command->redir.out[i]++;
+	if (type == '1')
+		fd = open(command->redir.out[i], O_RDWR | O_CREAT | O_TRUNC, 0644);
+	else
+		fd = open(command->redir.out[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
+		return (1);
+	while (i++, i < len_out)
+	{
+		type = command->redir.out[i][0];
+		command->redir.out[i]++;
+		close(fd);
+		if (type == '1')
+			fd = open(command->redir.out[i], O_RDWR | O_CREAT | O_TRUNC, 0644);
+		else
+			fd = open(command->redir.out[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			return (1);
+	}
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
 }	
 
 // EXECUTION
@@ -61,7 +82,7 @@ static int	execution(t_command *command, char **env)
 		{
 			write(2, "minishell: command not found : ", 31);
 			write(2, command->args[0], ft_strlen(command->args[0]));
-			write(1, "\n", 1);
+			write(2, "\n", 1);
 			command->status = 127;
 		}
 		free(path);
@@ -76,9 +97,13 @@ static int	execution(t_command *command, char **env)
 
 int	execute(t_command *command, char **env)
 {
+	int	old_stdout;
+	
+	old_stdout = dup(STDOUT_FILENO);
     // get_in
-	// get_out
-	command->status = execution(command, env);
+	if (!get_out(command))
+		command->status = execution(command, env);
 
+	dup2(old_stdout, STDOUT_FILENO);
 	return (command->status);
 }

@@ -1,0 +1,13 @@
+execution
+get_path.c
+get_path.o
+libft
+main.c
+main.o
+Makefile
+minishell
+minishell.h
+outfile
+prompt.c
+prompt.o
+README.md
