@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 17:37:28 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/30 14:58:52 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/30 18:12:23 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,11 @@ int cd(t_command *command)
 		status = chdir(command->args[1]);
 		if (status == -1)
 		{
-			write(2, "minishell: cd : no such file or directory: ", 43);
-			write(2, command->args[1], ft_strlen(command->args[1]));
-			write(2, "\n", 1);
+			print_error(FILE_NOT_FOUND, command->args[1]);
 			return (1);
 		}
 	}
 	else
-		;// Prendre en compte le cas de cd sans arg
+		(void)command;// Prendre en compte le cas de cd sans arg
 	return (0);
 }

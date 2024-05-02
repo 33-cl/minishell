@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/29 13:48:24 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/05/01 19:01:46 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,30 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+/*
+	Tout les types d'erreur a print
+*/
+
+typedef enum	e_error_type
+{
+	FILE_NOT_FOUND,
+	COMMAND_NOT_FOUND
+} e_error_type;
+
+/*
+	Permet d'avoir les redirections dans l'ordre avec 1 ou 2 devant pour indiquer
+	Si il s'agit d'un >>/<< ou >/<
+*/
+
 typedef struct  s_redirection
 {
-	// Permet d'avoir les redirections dans l'ordre avec 1 ou 2 devant pour indiquer 
-	// si il s'agit d'un >>/<< ou >/<
-
-	// Exemple : << eof < infile << test cat >> outfile > out > file2
 	char    **in;  // {"2eof", "1infile", "2test"}
 	char    **out; // {"2outfile", "1out", "1file2"}
 } t_redirection;
+
+/*
+	Structure qui permet de redecouper l'input de l'utilisateur en plusieurs infos
+*/
 
 typedef struct  s_command
 {
@@ -47,14 +62,17 @@ typedef struct  s_command
 	int					status;
 } t_command;
 
-
+// Execution functions
 char	*prompt(int status);
 char	*get_path(char *command, char **env);
-int     execute(t_command *command, char **env);
+int		execute(t_command *command, char **env);
 
 // Builtin commands
 int		pwd(void);
-void    echo(t_command *command);
+void	echo(t_command *command);
 int		cd(t_command *command);
+
+// Error functions
+void	print_error(int type_error, char *str);
 
 #endif

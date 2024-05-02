@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/20 17:01:16 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/04/30 18:11:25 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static char	*get_prompt(int status)
 		command = ft_strdup("\033[0;31m♦ \033[1;35m");
 	if (!command)
 		return (NULL);
-		
+
 	// Cherche le chemin actuel puis garde uniquement le nom du dernier dossier
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
@@ -67,9 +67,9 @@ static char	*get_prompt(int status)
 	free(cwd);
 	
 	// Pour Reinitialiser les couleurs
-    command = ft_strjoin(command, " \033[0m");
-    if (!command)
-        return (NULL);
+	command = ft_strjoin(command, " \033[0m");
+	if (!command)
+		return (NULL);
 
     return (command);
 }

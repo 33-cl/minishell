@@ -9,7 +9,7 @@ OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C libft
-	$(CC) $(LIBFLAGS) $(OBJS) -o $(NAME) libft/libft.a
+	$(CC) $(OBJS) -o $(NAME) libft/libft.a $(LIBFLAGS)
 
 all: $(NAME)
 
