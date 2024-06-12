@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 15:41:19 by maeferre          #+#    #+#             */
-/*   Updated: 2024/05/01 18:39:19 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/07 16:41:38 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdbool.h>
 
+// Libft project mandatory
 size_t	ft_strlen(const char *s);
 size_t	ft_tablen(char **tab);
 int		ft_atoi(const char *str);
@@ -55,5 +57,8 @@ void	ft_putnbr_fd(int n, int fd);
 char	*ft_itoa(int n);
 void	ft_striteri(char *s, void (*f)(unsigned int, char*));
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
+
+// Other functions
+bool	ft_is_space(char c);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 17:37:28 by maeferre          #+#    #+#             */
-/*   Updated: 2024/04/30 18:12:23 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/10 17:22:39 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,27 @@
 /*
 	Agis exactement comme la commande cd
 
-	Renvoie 1 et un message d'erreur en cas d'erreur de chdir
+	Renvoie un status ou -1 en cas d'erreur de malloc()
 */
 
-int cd(t_command *command)
+int cd(t_cmd *command, t_env *env)
 {
-	int	status;
-	
-	status = 0;
-	// Cas "classique"
 	if (ft_tablen(command->args) >= 3)
-	{
-		write(2, "minishell: cd : too many arguments\n", 35);
-		return (1);
-	}
+		return (print_error(TOO_MANY_ARGS, "cd"));
 	if (command->args[1])
 	{
-		status = chdir(command->args[1]);
-		if (status == -1)
-		{
-			print_error(FILE_NOT_FOUND, command->args[1]);
-			return (1);
-		}
+		if (command->args[1][0] == '-' && !command->args[1][1])
+			if (chdir(get_env(&env, "OLDPWD")) == -1)
+				return (print_error(FILE_NOT_FOUND, get_env(&env, "OLDPWD")), 1);
+		if (chdir(command->args[1]) == -1)
+			return (print_error(FILE_NOT_FOUND, command->args[1]), 1);
 	}
 	else
-		(void)command;// Prendre en compte le cas de cd sans arg
+		if (chdir(get_env(&env, "HOME")) == -1)
+			return (print_error(FILE_NOT_FOUND, get_env(&env, "HOME")), 1);
+	if (!set_env(&env, "OLD_PWD", get_env(&env, "PWD")))
+		return (-1);
+	if (!set_env(&env, "PWD", getcwd(NULL, 0)))
+		return (-1);
 	return (0);
 }

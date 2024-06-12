@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free_tab.c                                      :+:      :+:    :+:   */
+/*   ft_is_space.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/17 16:07:25 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 17:45:21 by maeferre         ###   ########.fr       */
+/*   Created: 2024/05/02 17:55:00 by qordoux           #+#    #+#             */
+/*   Updated: 2024/05/21 16:50:03 by qordoux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_free_tab(char **tab)
+bool	ft_is_space(char c)
 {
-	size_t	i;
-
-	i = 0;
-	if (!tab)
-		return ;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
+	if (c == ' ' || c == '\t' || c == '\n' || c == '\v' || \
+	c == '\f' || c == '\r')
+		return (true);
+	return (false);
 }

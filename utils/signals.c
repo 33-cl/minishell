@@ -1,37 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 22:14:47 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 16:39:47 by maeferre         ###   ########.fr       */
+/*   Created: 2024/05/23 13:39:25 by maeferre          #+#    #+#             */
+/*   Updated: 2024/06/12 14:19:22 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-void	*ft_calloc(size_t nmemb, size_t size)
+int	g_signal = 0;
+
+void	sigint_handler(int sig)
 {
-	unsigned char	*ptr;
-	size_t			t_size;
-
-	t_size = (nmemb * size);
-	if (nmemb == 0 || size == 0)
-	{
-		ptr = malloc(0);
-		if (!ptr)
-			return (NULL);
-	}
-	else if (t_size / nmemb != size)
-		return (NULL);
-	else
-	{
-		ptr = malloc(t_size);
-		if (!ptr)
-			return (NULL);
-		ft_bzero(ptr, t_size);
-	}
-	return (ptr);
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+	// printf("%s", get_prompt(1)); // Pour reafficher le prompt direct apres le \n
+	g_signal = 1;
+	rl_done = 1;
 }

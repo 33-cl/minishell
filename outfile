@@ -1,5 +1,0 @@
-NAME = minishell
-$(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME) libft/libft.a $(LIBFLAGS)
-all: $(NAME)
-	$(RM) $(NAME)

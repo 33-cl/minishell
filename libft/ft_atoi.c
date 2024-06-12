@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 14:33:47 by maeferre          #+#    #+#             */
-/*   Updated: 2023/11/29 13:43:17 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:25:53 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	ft_atoi(const char *str)
 
 	result = 0;
 	sign = 1;
+	if (!str)
+		return (0);
 	str = ft_check_whitespace(str);
 	if (*str == '-')
 	{
