@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 19:36:06 by qordoux           #+#    #+#             */
-/*   Updated: 2024/05/29 17:17:00 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/27 01:38:19 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void print_final_node(t_cmd *node) {
     printf("\n");
 
     printf("Number of Heredocs: %d\n", node->nb_heredocs);
-    printf("Heredoc FD: %d\n", node->fd_heredoc);
+    // printf("Heredoc FD: %s\n", node->fd_heredoc);
 
     printf("Redirections: ");
     if (node->redir) {
@@ -165,3 +165,30 @@ void print_command_details(t_command *command, t_env *env)
 //     }
 //     printf("\n");
 // }
+
+
+void test_heredoc_pipe(t_cmd *cmd)
+{
+    t_cmd *current = cmd;
+    char buffer[1024];
+    ssize_t bytes_read;
+
+    while (current != NULL)
+    {
+        if (current->fd_heredoc[0] != -1)
+        {
+            bytes_read = read(current->fd_heredoc[0], buffer, sizeof(buffer) - 1);
+            if (bytes_read >= 0)
+            {
+                buffer[bytes_read] = '\0'; // Assurer la terminaison de la chaîne
+                printf("Contenu du pipe pour le nœud: %s\n", buffer);
+            }
+            else
+            {
+                perror("read");
+            }
+            close(current->fd_heredoc[0]); // Fermer le descripteur de lecture après utilisation
+        }
+        current = current->next;
+    }
+}

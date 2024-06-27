@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   struct_manip.c                                     :+:      :+:    :+:   */
+/*   ft_isnumber.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 16:58:06 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 15:22:39 by maeferre         ###   ########.fr       */
+/*   Created: 2024/06/19 14:03:52 by maeferre          #+#    #+#             */
+/*   Updated: 2024/06/19 14:07:49 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-/*
-	Returns the length of the command struct
-*/
-
-int	cmd_len(t_cmd *command)
+bool ft_isnumber(const char *str)
 {
-	int	len;
-
-	if (command->args[0] == NULL)
-		return (0);
-	len = 1;
-	while (command->next != NULL)
+    if (*str == '\0')
+        return (false);
+    while (*str)
 	{
-		len++;
-		command = command->next;
-	}
-	return (len);
+        if (!ft_isdigit(*str))
+            return (false);
+        str++;
+    }
+    return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 17:15:14 by qordoux           #+#    #+#             */
-/*   Updated: 2024/06/12 15:12:22 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 17:55:38 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,20 @@ cmd1 "$vargument" | cmd2 argument | cmd3 'rherdoc' argument | cmd4 rinfile routf
 // minishell> |echo -n hola
 // input_copy = |e cho -n hola
 
+//convertir le t_env en char **
+
 // int	main(int argc, char **argv, char **envp)
 // {
 // 	char		*input;
 // 	t_command	*command;
-// 	t_cmd		*cmd = NULL;
 // 	t_env 		*env;
+// 	int			status;
 
 // 	(void)argc;
 // 	(void)argv;
 // 	command = NULL;
 // 	env = init_env(envp);
+// 	status = 0;
 // 	while (1)
 // 	{
 // 		input = readline("minishell> ");
@@ -86,14 +89,19 @@ cmd1 "$vargument" | cmd2 argument | cmd3 'rherdoc' argument | cmd4 rinfile routf
 //         		return (1);
 // 			init_command_fields(command); 
 // 			add_history(input);
-// 			if (input && parsing(command, input, env, cmd) == 0)
+// 			if (input && parsing(command, input, env, &status) == 0)
 // 			{
-// 				// ft_putstr_fd("works\n", 1);
 // 				print_final_list(command->final_cmd);
+// 				free_final_list(&command->final_cmd);
+// 				free_command(&command);
+// 				free_env(&env);
+// 				exit(0);
+	
 // 			}
 // 			else
 // 			{
-// 				// exit(2);
+			
+// 				exit(2);
 // 			}
 // 		}
 // 		free(input);
@@ -101,11 +109,32 @@ cmd1 "$vargument" | cmd2 argument | cmd3 'rherdoc' argument | cmd4 rinfile routf
 // 	return (0);
 // }
 
-int	parsing(t_command *command, char *input, t_env *env, int status)
+t_cmd	*parsing(char *input, t_env *env, int *status)
 {
+	t_command   *command;
+	t_cmd		*final_cmd;
+	
+	command = NULL;
+	command = (t_command *)malloc(sizeof(t_command));
+	if (!command)
+	{
+		*status = -1;
+		return (NULL);
+	}
+	init_command_fields(command);
 	if (input[0] != '\0') // Pour garder le status quand on fait entree
-		status = create_struct(command, input, env);
-	return (status);
+		*status = create_struct(command, input, env, status);
+	final_cmd = command->final_cmd;
+	free_command(&command);
+	return (final_cmd);
+}
+
+void	free_everything(t_command *command, char *input, t_env *env)
+{
+	free_final_list(&command->final_cmd);
+	free_command(&command);
+	free_env(&env);
+	free(input);
 }
 
 void init_command_fields(t_command *command)
@@ -127,7 +156,7 @@ t_command	*init_struct(void)
 	command = malloc(sizeof(t_command));
 	if (!command)
 		return (NULL);
-	ft_memset(command, 0, sizeof(t_command));
+	// memset(command, 0, sizeof(t_command));
 	//faire les free au xeme appel
 	//appeler une fonction qui initialise tout grace a input et sa position dans input
 	return (command);

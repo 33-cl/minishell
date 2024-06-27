@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 18:00:56 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/27 01:34:55 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <signal.h>
 
 # include <sys/wait.h>
+# include <sys/ioctl.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -46,6 +47,13 @@ extern int	g_signal;
 # define ERROR_DOUBLE_RIGHT_REDI "syntax error near unexpected token `>>'"
 # define ERROR_NEWLINE "syntax error near unexpected token `newline'"
 # define UNSET_NO_ARGS "unset: not enough arguments\n"
+
+typedef enum	e_signal
+{
+	NO_SIGNAL,
+	INT,
+	QUIT
+} e_signal;
 
 // Types d'erreurs d'execution
 typedef enum	e_error_type
@@ -71,7 +79,9 @@ typedef enum
 {
 	T_CMD,
 	T_ARG,
-	T_PIPE
+	T_PIPE,
+	T_REDIR,
+	T_HEREDOC
 } token_type;
 
 // Entree et sortie standard
@@ -81,24 +91,34 @@ typedef struct s_steams
 	int	out;
 } t_streams;
 
-// Environnement sous la forme d'une liste chainee
-typedef struct s_env
+typedef struct s_space_insertion_params
 {
-    char *name;
-    char *value;
-    struct s_env *next;
-	struct s_env *prev;
-} t_env;
+    int     i;
+    int     len;
+    bool    in_single_quote;
+    bool    in_double_quote;
+} t_space_insertion_params;
 
 typedef struct s_expand
 {
-    char			*result;
-    size_t			result_size;
-    char			*input;
-    t_env			*env;
-    size_t			pos;
-    size_t			start;
+	char			*result;
+	size_t			result_size;
+	char			*input;
+	struct s_env	*env;
+	size_t			pos;
+	size_t			start;
 } t_expand;
+
+// Définition de la structure s_env
+typedef struct s_env
+{
+	char			*name;
+	char			*value;
+	t_expand		exp_result;
+	struct s_env	*next;
+	struct s_env	*prev;
+} t_env;
+
 
 typedef struct s_args
 {
@@ -108,7 +128,6 @@ typedef struct s_args
 	struct s_args	*multi_quoted_args;
 	struct s_args	*prev;
 	struct s_args	*next;
-
 }	t_args;
 
 typedef struct s_iter_params
@@ -140,11 +159,13 @@ typedef struct s_cmd
 	char				**args;					// Tableau d'arguments (y compris la commande comme premier élément), faut il enlever les redirections dans les args?
 	char				**heredoc_delimiters;	// Delimiteurs pour chaque heredoc
 	int					nb_heredocs;			// Nombre de heredocs dans la commande
-	int					fd_heredoc;
+	int					fd_heredoc[2];
+	bool				malloc_failed;
 	char 				**redir;				//"+outfile" ou "-infile"
 	bool				redir_out;				// Indiquer si il y a une redir de sortie
 	int					exec;					// Type d'execution builtin/execve
-	
+	int					i;
+	int					j;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -156,20 +177,21 @@ typedef struct s_command
 	int					nb_heredocs;			// Nombre de heredocs dans la commande
 	int					fd_heredoc;
 	char 				**redir;				//"+outfile" ou "-infile"
+	int					malloc_error;
 	t_cmd				*final_cmd;
-	
 	struct s_command	*next;
 }	t_command;
 
 
 // int	parsing(t_command *command, char *input)
 
-int			parsing(t_command *command, char *input, t_env *env, int status);
-int			create_struct(t_command *command, char *input, t_env *env);
+t_cmd		*parsing(char *input, t_env *env, int *status);
+
 char		*ft_strtok_space(char *str);
 char		*handle_quote_strtok(char **input, bool *in_quote, char *quote_char, char *delim);
 void		*ft_realloc(void *s, size_t size);
 char		*ft_strtok_pipe(char *str, char *delim);
+int			create_struct(t_command *command, char *input, t_env *env, int *status);
 bool		parse_and_fill_struct(t_command *command, char *segment);
 int			count_args(char *input);
 t_command	*init_struct(void);
@@ -178,7 +200,7 @@ bool		add_redirection(char ***redirections, char *filename, int choice);
 bool		determine_redirection_type(t_command *command, char *token, char *next_token);
 bool		take_fill_redirection(t_command *command, char *token);
 int			determine_quote_type(const char *token);
-char		*realloc_for_more_space(char *input, char prev_char, \
+char		*realloc_for_more_space(char *input, \
 bool in_single_quote, bool in_double_quote);
 bool		count_when_need_space(bool in_single_quote, bool in_double_quote, char *input, int i);
 char		*put_space_before_redir(char *input, int i);
@@ -208,17 +230,18 @@ char		*heredoc(char *delimiter);
 bool		heredoc_init(t_command *command);
 void		*ft_realloc_string_array(void *s, size_t size);
 void		process_delimiter(char *delimiter);
+t_env		*init_env(char **envp);
 char		*get_env(t_env **env, char *name);
 bool		strtok_name_value(char **name, char **value, int i, char **envp);
 bool		malloc_set_name_value(t_env **new_node, char *name, char* value);
 char		*ft_strndup(const char *s, size_t n);
 void		print_command_details(t_command *command, t_env *env);
 bool		init_expand(t_expand *exp, char *input, t_env *env);
-char		*expand_variables(char *input, t_env *env, t_args *arg);
-bool		process_variable_part(t_expand *exp, t_args *arg);
+char		*expand_variables(char *input, t_env *env, t_args *arg, int *status);
+bool		process_variable_part(t_expand *exp, t_args *arg, int *status);
 bool		process_non_variable_part(t_expand *exp);
 bool		append_to_result(t_expand *exp, const char *temp);
-t_command	*replace_expand(t_command *command, t_env *env);
+t_command	*replace_expand(t_command *command, t_env *env, int *status, int *error);
 bool		put_everything_in_final_list(t_command *command);
 void		print_final_list(t_cmd *list);
 void		print_final_node(t_cmd *node);
@@ -226,12 +249,12 @@ char		**ft_realloc_string_array_final(char **array, size_t new_size);
 bool		add_specifier_to_struct(t_cmd **head_final_list, t_args *args, int *j);
 char		*ft_unquote_result(char	*str, t_args *current);
 bool		handle_multi_quoted_args(t_args	*current_multi_quoted_args, t_args *current, t_cmd *last, int *i);
-void		init_new_final_list_node(t_cmd **head, t_cmd **current, t_command *command);
-bool		process_unquoted_args(t_args *current, t_cmd *current_final, int *i);
+bool		init_new_final_list_node(t_cmd **head, t_cmd **current, t_command *command);
+int			process_unquoted_args(t_args *current, t_cmd *current_final, int *i);
 bool		process_specifier_args(t_args **current, t_cmd **current_final, int *j);
 bool		process_multi_quoted_args(t_args *current, t_cmd *current_final, int *i);
 bool		handle_delimiter_final(t_args **current, t_cmd **current_final, int *j);
-bool		process_quoted_or_unquoted(t_args *current, t_cmd *current_final, int *i);
+int			process_quoted_or_unquoted(t_args *current, t_cmd *current_final, int *i);
 bool		init_final_list(t_cmd **list, t_command *command);
 bool		add_heredoc_to_tempfile(t_cmd *final_list);
 void		print_file_content(const char *filename);
@@ -245,7 +268,36 @@ bool		split_into_new_nodes(char *str, t_args *args);
 void		init_iter_params(t_iter_params *iter);
 void		init_args_params(t_args_params *args_params, t_args *args);
 void		init_handle_quote_params(t_handle_quote_params *quote_params, char *str, t_iter_params *iter, t_args_params *args_params);
-
+void		free_command(t_command **command);
+void		free_args(t_args **args);
+void		free_env(t_env **env);
+void		free_final_list(t_cmd **final_cmd);
+void		skip_dollard_and_quotes_redir(char *delimiter);
+void		print_args(t_args *args);
+char		*remove_dollar_sign(char *str);
+void		process_redirection(char *str, t_args *current, t_cmd **head_final_list, int *j);
+void		free_expand(t_expand *exp);
+bool		add_heredoc_to_fd(t_cmd *cmd);
+void		test_heredoc_pipe(t_cmd *cmd);
+bool		syntax_operator_after(t_command *command);
+bool		syntax_error_after(t_command	*command);
+bool		redir_error_after(t_args	*current);
+bool		pipe_error_after(t_args *current);
+void		free_everything(t_command *command, char *input, t_env *env);
+void		free_command_before_heredoc(t_command **command);
+char		**ft_realloc_string_array_final_bis(char **array, size_t new_size);
+void		*ft_realloc_old_size_bis(void *ptr, size_t old_size, size_t new_size);
+int			finalize_struct(t_command *command, char *input, t_env *env, int *status);
+int			initialize_struct(t_command *command, char *input, t_env *env);
+void		handle_space_insertion(char *input, char *new_str, t_space_insertion_params *params);
+char		*realloc_and_init(char *input, bool *in_single_quote, bool *in_double_quote);
+bool		redir_need_space(bool in_single_quote, bool in_double_quote, char *input, int i);
+bool		pipe_need_space(bool in_single_quote, bool in_double_quote, char *input, int i);
+void		free_resources(char *name, char *value, t_env **current);
+void		initialize_vars(int *i, t_env **current, char **name, char **value);
+bool		handle_numeric_variable(t_expand *exp);
+bool		handle_special_cases(t_expand *exp, t_args *arg, int *status);
+void		free_command_before(t_command **command);
 // Prompt
 char	*prompt(int status);
 char	*get_prompt(int status);
@@ -253,18 +305,19 @@ char	*get_prompt(int status);
 // Execution
 int		cmd_len(t_cmd *command);
 bool	init_execution(pid_t **pids, t_streams *std, t_cmd *cmd, int *i);
+bool	check_exit(t_cmd *command, int *status);
 bool	get_command(char *command, char **env, char **path);
 bool	is_a_builtin(char *cmd);
 bool	exec_builtin(t_cmd *command, int *status, int *pipefd, t_env *env);
 int		execute(t_cmd *command, t_env *env, int status);
-void	ft_execve(t_cmd *command, t_env *env);
-bool	exec_execve(pid_t pid, t_cmd *command, int *pipefd, t_env *env);
-bool	wait_pids(int nb_commands, pid_t *pids, int *status, int exec);
+int		ft_execve(t_cmd *command, t_env *env, int status);
+bool	exec_execve(pid_t *pid, t_cmd *command, int *pipefd, t_env *env, t_streams *std, int i);
+void	wait_pids(int nb_commands, pid_t *pids, int *status, int exec);
 
 // Redirections
 int		get_in(t_cmd *command);
 int		get_out(t_cmd *command);
-int		reset_std(int old_stdin, int old_stdout);
+void	reset_std(t_streams *std);
 
 // Environnement
 t_env	*init_env(char **envp);
@@ -273,7 +326,7 @@ t_env	*copy_env(t_env *env);
 bool	set_env(t_env **env, char *name, char *value);
 bool	unset_env(t_env **env, char *name);
 char    **t_env_to_array(t_env *env);
-void	free_env(t_env *env);
+void	free_env(t_env **env);
 
 // Builtin commands
 int		pwd(void);
@@ -281,11 +334,16 @@ void	echo(t_cmd *command);
 int		cd(t_cmd *command, t_env *env);
 int		export(t_cmd *command, t_env *env);
 
+// Free
+void	free_main(t_cmd **cmd, t_env **env, char **input);
+
 // Error
 int		is_a_dir(char *cmd);
 int		print_error(int type_error, char *str);
 
 // Signals
+bool	check_signal(int *status);
 void	sigint_handler(int sig);
+void	sigquit_handler(int sig);
 
 #endif

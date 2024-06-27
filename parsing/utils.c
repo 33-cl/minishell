@@ -6,7 +6,7 @@
 /*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 18:10:51 by qordoux           #+#    #+#             */
-/*   Updated: 2024/05/22 19:55:51 by qordoux          ###   ########.fr       */
+/*   Updated: 2024/06/25 14:02:46 by qordoux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,10 @@ void	*ft_realloc_old_size(void *ptr, size_t old_size, size_t new_size)
     }
 	new_ptr = malloc(new_size);
     if (new_ptr == NULL)
+	{
+		// free(ptr);//j' ai ajoute ca
         return (NULL);
-
+	}
     if (ptr != NULL)
 	{
         if (old_size < new_size)
@@ -174,6 +176,7 @@ char	*ft_strtok_pipe(char *str, char *delim)
 
 void	quote_status(bool *in_single_quote, bool *in_double_quote, char current_char)
 {
+	// virer la gestion d'echappement
 	if (!*in_double_quote && current_char == '\'')
 		*in_single_quote = !*in_single_quote;
 	else if (!*in_single_quote && current_char == '\"')

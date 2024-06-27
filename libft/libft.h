@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 15:41:19 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/07 16:41:38 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/20 17:55:48 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ size_t	ft_tablen(char **tab);
 int		ft_atoi(const char *str);
 void	*ft_bzero(void *s, size_t n);
 int		ft_isalnum(int c);
+bool	ft_isnumber(const char *str);
 int		ft_isalpha(int c);
 int		ft_isascii(int c);
 int		ft_isdigit(int c);
@@ -47,6 +48,7 @@ void	*ft_calloc(size_t nmemb, size_t size);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin_free(char *s1, char *s2, int nb_free);
 char	**ft_split(char const *s, char c);
 void	ft_free_tab(char **tab);
 char	*ft_strdup(const char *s);

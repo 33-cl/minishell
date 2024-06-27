@@ -6,28 +6,29 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 17:02:20 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/09 15:09:59 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 15:08:30 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /*
-	Renvoie un booleen indiquant si une fonction est un builtin
+	Returns a bool indicating is the command is a builtin
 */
 
 bool	is_a_builtin(char *cmd)
 {
 	if (!ft_strcmp(cmd, "echo") || !ft_strcmp(cmd, "cd")
 		|| !ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "env")
-		|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset"))
+		|| !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset")
+		|| !ft_strcmp(cmd, "exit"))
 		return (true);
 	return (false);
 }
 
 /*
-	Choisis la fonction a executer suivant le nom de la commande
-	Renvoie un booleen en cas d'erreur de fonction
+	Executes the right function based on the name of the command
+	Returns the status of the execution
 */
 
 bool	builtin_handler(t_cmd *command, t_env *env, int *status)
@@ -48,8 +49,8 @@ bool	builtin_handler(t_cmd *command, t_env *env, int *status)
 }
 
 /*
-	Execute la commande dans le cas ou il s'agit d'un builtin
-	Renvoie un booleen indiquant si il y a une erreur de fonctions
+	Executes the commande if it's a builtin
+	Returns a bool if there is a dup2 error
 */
 
 bool	exec_builtin(t_cmd *command, int *status, int *pipefd, t_env *env)
@@ -67,7 +68,7 @@ bool	exec_builtin(t_cmd *command, int *status, int *pipefd, t_env *env)
 		close(pipefd[1]);
 	}
 	if (!builtin_handler(command, env, status))
-		return (-1);
+		return (status);
 	if (command->next != NULL)
 	{
 		if (dup2(old_stdout, STDOUT_FILENO) == -1)

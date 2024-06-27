@@ -6,11 +6,16 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 12:38:43 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 18:04:37 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 15:14:42 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+/*
+	Allocates the (pid_t *) tab and stores the STDIN and STDOUT in a struct
+	Returns a bool for malloc() error
+*/
 
 bool	init_execution(pid_t **pids, t_streams *std, t_cmd *cmd, int *i)
 {
@@ -24,11 +29,15 @@ bool	init_execution(pid_t **pids, t_streams *std, t_cmd *cmd, int *i)
 		return (free(pids), false);
 	std->out = dup(STDOUT_FILENO);
 	if (!std->out)
-		return (free(pids), false);
+		return (free(pids), close(std->in), false);
 	return (true);
 }
 
-bool	wait_pids(int nb_commands, pid_t *pids, int *status, int exec)
+/*
+	wait_pid of the (pid_t *) tab
+*/
+
+void	wait_pids(int nb_commands, pid_t *pids, int *status, int exec)
 {
 	int	i;
 
@@ -45,5 +54,4 @@ bool	wait_pids(int nb_commands, pid_t *pids, int *status, int exec)
 			waitpid(pids[i], NULL, 0);
 		i++;
 	}
-	return (true);
 }

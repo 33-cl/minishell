@@ -6,15 +6,14 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:11:59 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/10 18:43:56 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 15:28:00 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /*
-	Renvoie un booleen indiquant si la commande prise en parametres
-	doit etre consideree comme un dossier
+	Returns a bool based on is the command is considered as a dir
 */
 
 int		is_a_dir(char *cmd)
@@ -34,8 +33,7 @@ int		is_a_dir(char *cmd)
 }
 
 /*
-	Affiche un message d'erreur et renvoie le status de l'erreur
-	en question
+	Displays an error msg and returns the status erro
 */
 
 int		print_error(int type_error, char *str)

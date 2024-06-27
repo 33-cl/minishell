@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:49:26 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 16:39:19 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:08:17 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 
 /*
 	Les noms de variables d'environnement sont soumis a certaines conditions
+	Environnement variables names are restricted
 
-	Caracteres autorises :
+	Authorized chars :
 
-	premier caractere : A-Z a-z _
-	autres caracteres : A-Z a-z _ 0-9
+	first char  : A-Z a-z _
+	other chars : A-Z a-z _ 0-9
 */
 
 static bool	parsing_export(t_cmd *cmd, int nb_args)
@@ -36,7 +37,8 @@ static bool	parsing_export(t_cmd *cmd, int nb_args)
 			cmd->args[i][0] == '_'))
 			return (print_error(NOT_VALID_ID, error_msg), false);
 		j = 0;
-		while (j++, cmd->args[i] && cmd->args[i][j] != '\0' && cmd->args[i][j] != '=')
+		while (j++, cmd->args[i] && cmd->args[i][j] != '\0'
+			&& cmd->args[i][j] != '=')
 		{
 			if (!((cmd->args[i][j] >= 'A' && cmd->args[i][j] <= 'Z') ||
 				(cmd->args[i][j] >= 'a' && cmd->args[i][j] <= 'z') ||
@@ -49,63 +51,61 @@ static bool	parsing_export(t_cmd *cmd, int nb_args)
 	return (true);
 }
 
-
 /*
-	Trie l'environnement dans l'ordre croissant alphabetique
+	Sorts the env in ascending order
 */
 
 static t_env	*insert_sorted_desc(t_env *sorted, t_env *new_node)
 {
 	t_env	*current;
 
-    if (!sorted || ft_strcmp(new_node->name, sorted->name) > 0)
+	if (!sorted || ft_strcmp(new_node->name, sorted->name) > 0)
 	{
-        new_node->next = sorted;
-        if (sorted)
-            sorted->prev = new_node;
-        new_node->prev = NULL;
-        return new_node;
-    }
-    current = sorted;
-    while (current->next && ft_strcmp(new_node->name, current->next->name) <= 0)
-        current = current->next;
-    new_node->next = current->next;
-    if (current->next)
-        current->next->prev = new_node;
-    current->next = new_node;
-    new_node->prev = current;
-    return (sorted);
+		new_node->next = sorted;
+		if (sorted)
+			sorted->prev = new_node;
+		new_node->prev = NULL;
+		return (new_node);
+	}
+	current = sorted;
+	while (current->next && ft_strcmp(new_node->name, current->next->name) <= 0)
+		current = current->next;
+	new_node->next = current->next;
+	if (current->next)
+		current->next->prev = new_node;
+	current->next = new_node;
+	new_node->prev = current;
+	return (sorted);
 }
 
 static t_env	*sort_env(t_env *env)
 {
-    t_env 	*sorted;
-    t_env 	*current;
+	t_env	*sorted;
+	t_env	*current;
 	t_env	*next;
-	
+
 	sorted = NULL;
 	current = copy_env(env);
 	if (!current)
 		return (NULL);
-    while (current)
+	while (current)
 	{
-        next = current->next;
-        current->next = NULL;
-        current->prev = NULL;
-        sorted = insert_sorted_desc(sorted, current);
-        current = next;
-    }
+		next = current->next;
+		current->next = NULL;
+		current->prev = NULL;
+		sorted = insert_sorted_desc(sorted, current);
+		current = next;
+	}
 	free(current);
-    return (sorted);
+	return (sorted);
 }
 
-
 /*
-	Reproduis la commande export en shell
+	Reproduces export command
 
-	Renvoie 0 par defaut
-			1 en cas d'erreur de l'utilisateur
-			-1 en cas d'erreur de malloc()
+	Returns 0 by default
+			1 if user error
+		   -1 if malloc() error
 */
 
 int	export(t_cmd *command, t_env *env)
@@ -115,7 +115,6 @@ int	export(t_cmd *command, t_env *env)
 	int		nb_args;
 	char	*name;
 	char	*value;
-	
 
 	(void)env;
 	nb_args = ft_tablen(command->args);

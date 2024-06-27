@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/10 18:54:31 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/20 18:03:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*prompt(int status)
 	char	*prompt;
 	char	*input;
 
-	printf("(%d) ", status);
+	// printf("(%d) ", status);
 	prompt = get_prompt(status);
 	if (!prompt)
 		return (NULL);
@@ -45,6 +45,7 @@ char	*get_prompt(int status)
 {
 	char	*command;
 	char	*cwd;
+	char	*final_cwd;
 
 	if (status == 0)
 		command = ft_strdup("\033[0;32m♦ \033[1;35m");	
@@ -55,14 +56,14 @@ char	*get_prompt(int status)
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 		return (free(command), NULL);
-	cwd = ft_strdup(ft_strrchr(cwd, '/') + 1);
-	if (!cwd)
+	final_cwd = ft_strdup(ft_strrchr(cwd, '/') + 1);
+	free(cwd);
+	if (!final_cwd)
 		return (free(command), NULL);
-	command = ft_strjoin(command, cwd);
+	command = ft_strjoin_free(command, final_cwd, 3);
 	if (!command)
 		return (NULL);
-	free(cwd);
-	command = ft_strjoin(command, " \033[0m");
+	command = ft_strjoin_free(command, " \033[0m", 1);
 	if (!command)
 		return (NULL);
     return (command);

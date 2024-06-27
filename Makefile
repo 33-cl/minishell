@@ -6,7 +6,7 @@
 #    By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/17 12:55:56 by qordoux           #+#    #+#              #
-#    Updated: 2024/06/12 17:41:24 by maeferre         ###   ########.fr        #
+#    Updated: 2024/06/25 15:41:06 by maeferre         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,9 @@ CFLAGS := -Wall -Wextra -Werror -MMD -MP -g
 BUILD_DIR := .build
 LIBFT := ./libft
 LIBS := ./libft/libft.a
-SRC := $(wildcard *.c) $(wildcard utils/*.c) $(wildcard execution/*.c) $(wildcard parsing/*.c)
+SRC := main.c utils/errors.c utils/free_main.c utils/get_path.c utils/prompt.c utils/reconvert_env.c utils/signals.c \
+		parsing/add_space.c parsing/env.c parsing/expand_utils.c parsing/expand.c parsing/fill_redirection.c parsing/final_list.c parsing/free.c parsing/handle_redir_final.c parsing/heredoc.c parsing/init_struct.c parsing/parsing.c parsing/print_struct.c parsing/quoted_or_not_final.c parsing/syntax_error.c parsing/utils_final.c parsing/utils.c \
+		execution/builtin.c execution/cd.c execution/echo.c execution/environnement.c execution/execute.c execution/execution_utils.c execution/execve.c execution/exit.c execution/export.c execution/pwd.c execution/redirections.c execution/struct_manip.c
 #SRC := $(wildcard *.c) $(wildcard utils/*.c) $(wildcard parsing/*.c)
 OBJ := $(SRC:%.c=$(BUILD_DIR)/%.o)
 DEP := $(SRC:%.c=$(BUILD_DIR)/%.d)

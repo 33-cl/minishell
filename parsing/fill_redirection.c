@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fill_redirection.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 14:41:01 by qordoux           #+#    #+#             */
-/*   Updated: 2024/05/29 19:59:00 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:40:10 by qordoux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@
 // {
 // 	char	*next_token;
 
-// 	if (ft_strcmp(token, ">") == 0 || ft_strcmp(token, "<") == 0 || 
+// 	if (ft_strcmp(token, ">") == 0 || ft_strcmp(token, "<") == 0 || \
 // 	ft_strcmp(token, "<<") == 0 || ft_strcmp(token, ">>") == 0)
 // 	{
 // 		next_token = ft_strtok_space(NULL, " ");

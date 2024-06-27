@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 15:21:51 by maeferre          #+#    #+#             */
-/*   Updated: 2024/05/30 14:01:30 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:11:16 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	number_flags(char **args)
 {
 	int		i;
 	size_t	j;
-	
+
 	i = 1;
 	while (args[i])
 	{
@@ -38,11 +38,11 @@ static int	number_flags(char **args)
 }
 
 /*
-	Reproduction de la commande echo
-	"echo -n" retire le '\n' a la fin du print
+	Reproduces echo command
+	"echo -n" to remove the endline
 */
 
-void    echo(t_cmd *command)
+void	echo(t_cmd *command)
 {
 	int	nb_args;
 	int	i;

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:42:56 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 17:57:31 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/17 14:12:50 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ static	char	*get_path(char *command, char **env, size_t i)
 			return (NULL);
 	paths = ft_split(env[i] + 5, ':');
 	if (!paths)
-		return (ft_free_tab(paths), NULL);
+		return (ft_free_tab(paths), exit(EXIT_FAILURE), NULL);
 	i = -1;
 	while (i++, paths[i])
 	{
 		path = malloc(sizeof(char) + ft_strlen(paths[i])
 				+ ft_strlen(command) + 2);
 		if (!path)
-			return (ft_free_tab(paths), NULL);
+			return (ft_free_tab(paths), exit(EXIT_FAILURE), NULL);
 		path = fill_path(path, paths, command, i);
 		if (!access(path, F_OK))
 			return (ft_free_tab(paths), path);

@@ -6,30 +6,26 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 22:28:29 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/12 17:59:14 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:14:16 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /*
-	Execute la commande lorsqu'on connait l'entree et la sortie de la commande
-
-	(Au check du status d'erreur, attention a EXIT_SUCCESS a la fin de chaque builtin)
+	Executes the command if its not a builtin and the redirections are handled 
 */
 
-void	ft_execve(t_cmd *cmd, t_env *env)
+int	ft_execve(t_cmd *cmd, t_env *env, int status)
 {
-	int		status;
 	char	*path;
 	char	**final_env;
-	
-	status = 0;
+
 	final_env = t_env_to_array(env);
+	free_env(&env);
 	if (!final_env)
 		exit(-1);
-	if (!get_command(cmd->args[0], final_env, &path))
-		exit(-1);
+	get_command(cmd->args[0], final_env, &path);
 	if (path)
 	{
 		execve(path, cmd->args, final_env);
@@ -41,30 +37,31 @@ void	ft_execve(t_cmd *cmd, t_env *env)
 			status = print_error(PERMISSION_DENIED, cmd->args[0]);
 		else
 			status = print_error(FILE_NOT_FOUND, cmd->args[0]);
-		free(path);
-		ft_free_tab(final_env);
-		exit(status);
+		return (free_final_list(&cmd), free(path), ft_free_tab(final_env), exit(status), 0);
 	}
-	if (!((cmd->args[0][0] == ':' || cmd->args[0][0] == '!') 
-		&& !cmd->args[0][1] && !cmd->args[1]) && cmd->args[0][0])
+	if (!((cmd->args[0][0] == ':' || cmd->args[0][0] == '!' || cmd->args[0][0]
+		== '#') && !cmd->args[0][1] && !cmd->args[1]) && cmd->args[0][0])
 		status = print_error(COMMAND_NOT_FOUND, cmd->args[0]);
-	ft_free_tab(final_env);
-	exit(status);
+	return (free_final_list(&cmd), ft_free_tab(final_env), exit(status), 0);
 }
 
 /*
-	Execute la commande dans le cas ou il faut l'executer avec execve
-	Renvoie un booleen indiquant en cas d'erreur de fonctions
+	Executes the command if it's not a builtin
+	Returns a bool for function() error
 */
 
-bool	exec_execve(pid_t pid, t_cmd *command, int *pipefd, t_env *env)
+bool	exec_execve(pid_t *pid, t_cmd *command, int *pipefd, t_env *env, t_streams *std, int i)
 {
 	command->exec = EXECVE;
-	pid = fork();
-	if (pid == -1)
+	*pid = fork();
+	if (*pid == -1)
 		return (false);
-	if (pid == 0)
+	if (*pid == 0)
 	{
+		signal(SIGQUIT, SIG_DFL);
+		free(pid - i);
+		close(std->in);
+		close(std->out);
 		if (command->next != NULL && !command->redir_out)
 		{
 			close(pipefd[0]);
@@ -72,7 +69,7 @@ bool	exec_execve(pid_t pid, t_cmd *command, int *pipefd, t_env *env)
 				return (close(pipefd[1]), false);
 			close(pipefd[1]);
 		}
-		ft_execve(command, env);
+		ft_execve(command, env, 0);
 	}
 	if (command->next != NULL)
 	{
