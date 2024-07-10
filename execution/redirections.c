@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:56:15 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 16:05:25 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/03 17:09:12 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 	Reinitilizes in and out
 */
 
-void	reset_std(t_streams *std)
+void	reset_std(t_process *infos)
 {
-	dup2(std->in, STDIN_FILENO);
-	close(std->in);
-	dup2(std->out, STDOUT_FILENO);
-	close(std->out);
+	dup2(infos->stdin, STDIN_FILENO);
+	close(infos->stdin);
+	dup2(infos->stdout, STDOUT_FILENO);
+	close(infos->stdout);
 }
 
 /*

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_main.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 18:23:32 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/26 16:27:48 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/03 17:17:10 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	free_main(t_cmd **cmd, t_env **env, char **input)
 {
-	// if (*cmd)
-	// 	free_final_list(cmd);
 	(void)cmd;
 	if (*env)
 		free_env(env);

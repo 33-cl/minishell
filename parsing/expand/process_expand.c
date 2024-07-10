@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_utils.c                                     :+:      :+:    :+:   */
+/*   process_expand.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/18 17:22:44 by qordoux           #+#    #+#             */
-/*   Updated: 2024/06/25 19:55:31 by qordoux          ###   ########.fr       */
+/*   Created: 2024/07/06 15:24:29 by odx               #+#    #+#             */
+/*   Updated: 2024/07/06 15:26:41 by odx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 /* append to result rellocate result if result need space and calculate 
 length tu use strlcat to append temp to result */
@@ -66,15 +66,17 @@ bool	handle_special_cases(t_expand *exp, t_args *arg, int *status)
 	return (false);
 }
 
-bool	handle_numeric_variable(t_expand *exp)
+bool	handle_numeric_variable(t_expand *exp, int *status)
 {
 	char	*var_value;
 
 	if (ft_isdigit(exp->input[exp->pos]))
 	{
 		exp->pos++;
-		var_value = ft_strndup(exp->input + exp->start, \
-		exp->pos - exp->start - 1);
+		var_value = ft_strndup(exp->input + exp->start, exp->pos \
+		- exp->start - 1);
+		if (var_value == NULL)
+			return (*status = -1, false);
 		if (var_value)
 		{
 			append_to_result(exp, var_value);
@@ -93,18 +95,20 @@ bool	process_variable_part(t_expand *exp, t_args *arg, int *status)
 	if (handle_special_cases(exp, arg, status))
 		return (true);
 	exp->start = ++exp->pos;
-	if (handle_numeric_variable(exp))
+	if (exp->input[exp->pos - 1] == '$' && (exp->input[exp->pos] == '\0' || \
+	exp->input[exp->pos] == '\n'))
+		return (append_to_result(exp, "$"), true);
+	if (handle_numeric_variable(exp, status))
 		return (true);
 	while (exp->input[exp->pos] != '\0' && (ft_isalnum(exp->input[exp->pos]) \
 	|| exp->input[exp->pos] == '_'))
 		exp->pos++;
 	var_name = ft_strndup(exp->input + exp->start, exp->pos - exp->start);
+	if (var_name == NULL)
+		return (*status = -1, false);
 	var_value = get_env(&exp->env, var_name);
 	free(var_name);
 	if (var_value)
-	{
-		append_to_result(exp, var_value);
-		return (true);
-	}
+		return (append_to_result(exp, var_value), true);
 	return (true);
 }

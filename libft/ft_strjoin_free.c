@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin_free.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 17:52:00 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/20 17:57:19 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/08 20:04:52 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static char	*ft_fill_join(char *str, char *s1, char *s2, int nb_free)
 	j = 0;
 	len_s1 = ft_strlen(s1);
 	len_s2 = ft_strlen(s2);
-
 	while (i < len_s1)
 	{
 		str[i] = s1[i];

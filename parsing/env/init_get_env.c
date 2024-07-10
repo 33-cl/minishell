@@ -1,35 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   init_get_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/15 17:39:34 by qordoux           #+#    #+#             */
-/*   Updated: 2024/06/25 19:50:47 by qordoux          ###   ########.fr       */
+/*   Created: 2024/07/06 22:22:20 by odx               #+#    #+#             */
+/*   Updated: 2024/07/07 00:14:13 by odx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-
-bool	strtok_name_value(char **name, char **value, int i, char **envp)
-{
-	char	*equal_sign;
-
-	equal_sign = ft_strchr(envp[i], '=');
-	if (equal_sign == NULL)
-		return (false);
-	*name = ft_strndup(envp[i], equal_sign - envp[i]);
-	if (*name == NULL)
-		return (false);
-	*value = ft_strdup(equal_sign + 1);
-	if (*value == NULL)
-	{
-		free(*name);
-		return (false);
-	}
-	return (true);
-}
+#include "../../minishell.h"
 
 bool	malloc_set_name_value(t_env **new_node, char *name, char *value)
 {
@@ -54,21 +35,6 @@ bool	malloc_set_name_value(t_env **new_node, char *name, char *value)
 	if (value)
 		free(value);
 	return (true);
-}
-
-void	initialize_vars(int *i, t_env **current, char **name, char **value)
-{
-	*i = -1;
-	*current = NULL;
-	*name = NULL;
-	*value = NULL;
-}
-
-void	free_resources(char *name, char *value, t_env **current)
-{
-	free(name);
-	free(value);
-	free_env(current);
 }
 
 t_env	*init_env(char **envp)

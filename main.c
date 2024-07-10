@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/26 18:16:52 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/09 02:32:48 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 /*
 
-	- Faire en sorte que set_env cree une variable sans value dans l'environnement
+	- Faire en sorte que set_env cree une variable
+		sans value dans l'environnement
 	- Prendre en compte ctrl-D dans les heredocs
 	- Corriger les leaks
 
@@ -49,11 +50,10 @@
 
 */
 
-
 int	loop(t_env *env, int status)
 {
-	t_cmd		*cmd;
-	char        *input;
+	t_cmd	*cmd;
+	char	*input;
 
 	cmd = NULL;
 	while (1)
@@ -62,10 +62,10 @@ int	loop(t_env *env, int status)
 		if (!input)
 			return (printf("exit\n"), free_main(&cmd, &env, &input), status);
 		if (check_signal(&status))
-			continue;
+			continue ;
 		cmd = parsing(input, env, &status);
 		if (status != 0)
-			continue;
+			continue ;
 		if (input[0] != '\0')
 		{
 			if (check_exit(cmd, &status))
@@ -74,18 +74,19 @@ int	loop(t_env *env, int status)
 		}
 		if (status == -1 || status == 255)
 			return (free_main(&cmd, &env, &input), 1);
-		free_final_list(&cmd);
+		free_final_list_bis(&cmd);
 		free(input);
 	}
 }
 
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
 	char	*new_shlvl;
-	t_env	*new_env = NULL;
+	t_env	*new_env;
 
 	(void)argc;
 	(void)argv;
+	new_env = NULL;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	new_env = init_env(env);

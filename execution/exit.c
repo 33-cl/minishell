@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:35:29 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 15:17:14 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/03 16:25:14 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,9 @@ bool	check_exit(t_cmd *command, int *status)
 	if (ft_strcmp(command->args[0], "exit"))
 		return (false);
 	if (len == 1)
-	{
-		*status = 0;
-		return (true);
-	}
+		return (*status = 0, true);
 	if (len > 2)
-	{
-		*status = 1;
-		return (write(2, "exit: too many arguments\n", 25), false);
-	}
+		return (*status = 1, write(2, "exit: too many arguments\n", 25), false);
 	write(1, "exit\n", 5);
 	if (!ft_isnumber(command->args[1]))
 	{

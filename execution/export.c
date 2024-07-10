@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:49:26 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 16:08:17 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/03 16:56:21 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,39 +108,44 @@ static t_env	*sort_env(t_env *env)
 		   -1 if malloc() error
 */
 
-int	export(t_cmd *command, t_env *env)
+static int	add_variable_to_env(char *arg, t_env *env)
 {
-	int		i;
 	int		j;
-	int		nb_args;
 	char	*name;
 	char	*value;
 
-	(void)env;
+	j = 0;
+	while (arg[j] && arg[j] != '=')
+		j++;
+	name = malloc(sizeof(char) * (j + 1));
+	if (!name)
+		return (-1);
+	ft_strlcpy(name, arg, j + 1);
+	value = ft_strchr(arg, '=');
+	if (value)
+		value++;
+	if (!set_env(&env, name, value))
+		return (free(name), -1);
+	free(name);
+	return (0);
+}
+
+int	export(t_cmd *command, t_env *env)
+{
+	int		nb_args;
+	int		i;
+
 	nb_args = ft_tablen(command->args);
 	if (nb_args == 1)
-	{
-		if (!print_env(sort_env(env)))
-			return (-1);
-		return (0);
-	}
+		return (!print_env(sort_env(env)) * -1);
 	if (!parsing_export(command, nb_args))
 		return (1);
-	i = 0;
-	while (i++, command->args[i])
+	i = 1;
+	while (command->args[i])
 	{
-		j = 0;
-		while (command->args[i][j] && command->args[i][j] != '=')
-			j++;
-		name = malloc(sizeof(char) * j + 1);
-		if (!name)
+		if (add_variable_to_env(command->args[i], env) == -1)
 			return (-1);
-		ft_strlcpy(name, command->args[i], j + 1);
-		value = ft_strchr(command->args[i], '=');
-		if (value)
-			value++;
-		if (!set_env(&env, name, value))
-			return (free(name), -1);
+		i++;
 	}
 	return (0);
 }

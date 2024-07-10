@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:11:59 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 15:28:00 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/08 20:23:42 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	Returns a bool based on is the command is considered as a dir
 */
 
-int		is_a_dir(char *cmd)
+int	is_a_dir(char *cmd)
 {
 	size_t	i;
 
@@ -25,7 +25,8 @@ int		is_a_dir(char *cmd)
 	{
 		if (cmd[i] != '.' && cmd[i] != '/')
 			return (0);
-		if (cmd[i] == '.' && cmd[i + 1] && cmd[i + 1] == '.' && cmd[i + 2] && cmd[i + 2] == '.')
+		if (cmd[i] == '.' && cmd[i + 1] && cmd[i + 1] == '.'
+			&& cmd[i + 2] && cmd[i + 2] == '.')
 			return (0);
 		i++;
 	}
@@ -36,13 +37,11 @@ int		is_a_dir(char *cmd)
 	Displays an error msg and returns the status erro
 */
 
-int		print_error(int type_error, char *str)
+int	print_error(int type_error, char *str)
 {
 	write(2, "minishell: ", 11);
-
 	if (str)
 		write(2, str, ft_strlen(str));
-
 	if (type_error == FILE_NOT_FOUND)
 		return (write(2, ": no such file or directory\n", 28), 127);
 	else if (type_error == COMMAND_NOT_FOUND)
@@ -52,7 +51,7 @@ int		print_error(int type_error, char *str)
 	else if (type_error == PERMISSION_DENIED)
 		return (write(2, ": Permission denied\n", 20), 126);
 	else if (type_error == ARGUMENT_REQUIRED)
-		return (write(2, ": filename argument required\n.: usage: . filename [arguments]\n", 62), 2);
+		return (write(2, FAR, 62), 2);
 	else if (type_error == TOO_MANY_ARGS)
 		return (write(2, " : too many arguments\n", 22), 1);
 	else if (type_error == NOT_VALID_ID)

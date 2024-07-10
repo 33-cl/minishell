@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 22:28:29 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/26 19:14:16 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/09 02:52:33 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 	char	**final_env;
 
 	final_env = t_env_to_array(env);
-	free_env(&env);
 	if (!final_env)
 		exit(-1);
 	get_command(cmd->args[0], final_env, &path);
@@ -37,7 +36,8 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 			status = print_error(PERMISSION_DENIED, cmd->args[0]);
 		else
 			status = print_error(FILE_NOT_FOUND, cmd->args[0]);
-		return (free_final_list(&cmd), free(path), ft_free_tab(final_env), exit(status), 0);
+		free_final_list(&cmd);
+		return (free(path), ft_free_tab(final_env), exit(status), 0);
 	}
 	if (!((cmd->args[0][0] == ':' || cmd->args[0][0] == '!' || cmd->args[0][0]
 		== '#') && !cmd->args[0][1] && !cmd->args[1]) && cmd->args[0][0])
@@ -45,31 +45,39 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 	return (free_final_list(&cmd), ft_free_tab(final_env), exit(status), 0);
 }
 
+static bool	child_process(t_cmd *cmd, int *pipefd, t_env *env, t_process *infos)
+{
+	signal(SIGQUIT, SIG_DFL);
+	// ft_free_tab(cmd->heredoc_delimiters);
+	free(infos->pids);
+	close(infos->stdin);
+	close(infos->stdout);
+	if (cmd->next != NULL && !cmd->redir_out)
+	{
+		close(pipefd[0]);
+		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+			return (close(pipefd[1]), false);
+		close(pipefd[1]);
+	}
+	ft_execve(cmd, env, 0);
+	return (true);
+}
+
 /*
 	Executes the command if it's not a builtin
 	Returns a bool for function() error
 */
 
-bool	exec_execve(pid_t *pid, t_cmd *command, int *pipefd, t_env *env, t_streams *std, int i)
+bool	exec_execve(t_cmd *command, int *pipefd, t_env *env, t_process *infos)
 {
 	command->exec = EXECVE;
-	*pid = fork();
-	if (*pid == -1)
+	infos->pids[infos->nb_pids] = fork();
+	if (infos->pids[infos->nb_pids] == -1)
 		return (false);
-	if (*pid == 0)
+	if (infos->pids[infos->nb_pids] == 0)
 	{
-		signal(SIGQUIT, SIG_DFL);
-		free(pid - i);
-		close(std->in);
-		close(std->out);
-		if (command->next != NULL && !command->redir_out)
-		{
-			close(pipefd[0]);
-			if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-				return (close(pipefd[1]), false);
-			close(pipefd[1]);
-		}
-		ft_execve(command, env, 0);
+		if (!child_process(command, pipefd, env, infos))
+			return (false);
 	}
 	if (command->next != NULL)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/20 18:03:43 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/03 17:20:14 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ char	*prompt(int status)
 	char	*prompt;
 	char	*input;
 
-	// printf("(%d) ", status);
 	prompt = get_prompt(status);
 	if (!prompt)
 		return (NULL);
@@ -40,7 +39,6 @@ char	*prompt(int status)
 	return (input);
 }
 
-
 char	*get_prompt(int status)
 {
 	char	*command;
@@ -48,7 +46,7 @@ char	*get_prompt(int status)
 	char	*final_cwd;
 
 	if (status == 0)
-		command = ft_strdup("\033[0;32m♦ \033[1;35m");	
+		command = ft_strdup("\033[0;32m♦ \033[1;35m");
 	else
 		command = ft_strdup("\033[0;31m♦ \033[1;35m");
 	if (!command)
@@ -66,5 +64,5 @@ char	*get_prompt(int status)
 	command = ft_strjoin_free(command, " \033[0m", 1);
 	if (!command)
 		return (NULL);
-    return (command);
+	return (command);
 }

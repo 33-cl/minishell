@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environnement.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 16:38:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/25 16:17:24 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/08 20:02:42 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,21 @@ bool	set_env(t_env **env, char *name, char *value)
 	t_env	*new_node;
 	char	*new_value;
 
-	if (!env || !name || !value)
+	if (!env || !name)
 		return (false);
 	current = *env;
 	while (current != NULL)
 	{
 		if (ft_strcmp(current->name, name) == 0)
 		{
-			new_value = ft_strdup(value);
-			if (!new_value)
-				return (false);
+			if (!value)
+				new_value = ft_strdup("");
+			else
+			{
+				new_value = ft_strdup(value);
+				if (!new_value)
+					return (false);
+			}
 			free(current->value);
 			current->value = new_value;
 			return (true);
@@ -85,7 +90,10 @@ bool	set_env(t_env **env, char *name, char *value)
 	new_node->name = ft_strdup(name);
 	if (!new_node->name)
 		return (free(new_node), false);
-	new_node->value = ft_strdup(value);
+	if (!value)
+		new_node->value = ft_strdup("");
+	else
+		new_node->value = ft_strdup(value);
 	if (!new_node->value)
 		return (free(new_node->name), free(new_node), false);
 	new_node->next = NULL;
@@ -121,8 +129,7 @@ bool	unset_env(t_env **env, char *name)
 				*env = current->next;
 				free(current->name);
 				free(current->value);
-				free(current);
-				return (true);
+				return (free(current), true);
 			}
 		}
 		prev = current;

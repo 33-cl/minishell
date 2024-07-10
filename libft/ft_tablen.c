@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tablen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
+/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/20 16:12:15 by maeferre          #+#    #+#             */
-/*   Updated: 2024/05/04 21:31:03 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/08 20:20:20 by debian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
 /*
-	Renvoie la taille d'un char **
+	Returns the len of a char **
 */
 
 size_t	ft_tablen(char **tab)
 {
-	size_t  i;
+	size_t	i;
 
 	i = 0;
 	if (tab == NULL)
