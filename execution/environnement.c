@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environnement.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 16:38:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/08 20:02:42 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/17 23:28:32 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,63 +45,38 @@ bool	print_env(t_env *env)
 	current = env;
 	if (current == NULL)
 		return (false);
-	print_env(current->next);
-	printf("%s=%s\n", current->name, current->value);
+	if (current->next)
+		print_env(current->next);
+	if (current->name && current->value && current->value[0])
+		printf("%s=%s\n", current->name, current->value);
+	return (true);
+}
+
+bool	print_env_reverse(t_env *env)
+{
+	t_env	*current;
+
+	current = env;
+	if (current == NULL)
+		return (false);
+	while (current != NULL)
+	{
+		if (current->name && current->value && current->value[0])
+			printf("%s=%s\n", current->name, current->value);
+		current = current->next;
+	}
 	return (true);
 }
 
 /*
-	Assigns "value" to the var "name" in the env
-	Returns a bool for malloc() error
+	Resets an env var to NULL
 */
 
-bool	set_env(t_env **env, char *name, char *value)
+static	void	reset_var(t_env **var)
 {
-	t_env	*current;
-	t_env	*new_node;
-	char	*new_value;
-
-	if (!env || !name)
-		return (false);
-	current = *env;
-	while (current != NULL)
-	{
-		if (ft_strcmp(current->name, name) == 0)
-		{
-			if (!value)
-				new_value = ft_strdup("");
-			else
-			{
-				new_value = ft_strdup(value);
-				if (!new_value)
-					return (false);
-			}
-			free(current->value);
-			current->value = new_value;
-			return (true);
-		}
-		if (current->next == NULL)
-			break ;
-		current = current->next;
-	}
-	new_node = malloc(sizeof(t_env));
-	if (!new_node)
-		return (false);
-	new_node->name = ft_strdup(name);
-	if (!new_node->name)
-		return (free(new_node), false);
-	if (!value)
-		new_node->value = ft_strdup("");
-	else
-		new_node->value = ft_strdup(value);
-	if (!new_node->value)
-		return (free(new_node->name), free(new_node), false);
-	new_node->next = NULL;
-	if (current == NULL)
-		*env = new_node;
-	else
-		current->next = new_node;
-	return (true);
+	(*var)->name = NULL;
+	(*var)->value = NULL;
+	*var = NULL;
 }
 
 /*
@@ -115,10 +90,10 @@ bool	unset_env(t_env **env, char *name)
 	t_env	*prev;
 
 	if (!name)
-		return (write(2, UNSET_NO_ARGS, 28), false);
+		return (write(2, UNSET_NO_ARGS, 28), true);
 	current = *env;
 	prev = NULL;
-	while (current->next != NULL)
+	while (current != NULL && current->name)
 	{
 		if (ft_strcmp(current->name, name) == 0)
 		{
@@ -129,7 +104,7 @@ bool	unset_env(t_env **env, char *name)
 				*env = current->next;
 				free(current->name);
 				free(current->value);
-				return (free(current), true);
+				return (free(current), reset_var(&current), false);
 			}
 		}
 		prev = current;

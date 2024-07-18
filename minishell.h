@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/08 20:38:14 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/18 16:05:35 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef enum e_signal
 {
 	NO_SIGNAL,
 	INT,
+	INT_C,
 	QUIT
 }	t_signal;
 
@@ -67,6 +68,7 @@ typedef enum e_error_type
 
 typedef enum e_exec_type
 {
+	NONE,
 	BUILTIN,
 	EXECVE,
 }	t_exec_type;
@@ -79,14 +81,6 @@ typedef enum e_token_type
 	T_REDIR,
 	T_HEREDOC
 }	t_token_type;
-
-typedef struct s_process
-{
-	int		stdin;
-	int		stdout;
-	pid_t	*pids;
-	int		nb_pids;
-}	t_process;
 
 typedef struct s_space_insertion_params
 {
@@ -114,6 +108,17 @@ typedef struct s_env
 	struct s_env	*next;
 	struct s_env	*prev;
 }	t_env;
+
+typedef struct s_process
+{
+	int		stdin;
+	int		stdout;
+	pid_t	*pids;
+	int		nb_pids;
+	char	*input;
+	int		piped;
+	t_env	*env;
+}	t_process;
 
 typedef struct s_args
 {
@@ -157,9 +162,11 @@ typedef struct s_cmd
 	char				**redir;
 	bool				redir_out;
 	int					exec;
+	int					last_exec;
 	int					i;
 	int					j;
 	struct s_cmd		*next;
+	struct s_cmd		*prev;
 }	t_cmd;
 
 typedef struct s_command
@@ -176,7 +183,8 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
-t_cmd		*parsing(char *input, t_env *env, int *status);
+// Parsing
+t_cmd		*parsing(char *input, t_env *env, int *status, int *old_status);
 char		*ft_strtok_space(char *str);
 char		*handle_quote_strtok(char **input, bool *in_quote, \
 char *quote_char, char *delim);
@@ -209,7 +217,7 @@ void		add_arg_to_arg(t_args *new_arg, t_args **last_arg, t_args *current);
 bool		add_heredoc_delimiter(t_command *command, t_args *args);
 void		remove_quotes_in_delimiter(t_command *command);
 bool		realloc_temp(t_command *command, int i);
-bool		heredoc_init(t_command *command);
+bool		heredoc_init(t_command *command, int *error);
 void		process_delimiter(char *delimiter);
 char		*get_env(t_env **env, char *name);
 bool		strtok_name_value(char **name, char **value, int i, char **envp);
@@ -266,10 +274,10 @@ bool		create_and_add_remaining_arg(char *str, t_iter_params *iter, \
 t_args_params *args_params);
 t_args		*init_new_arg(char *token);
 void		handle_quote(char c, char *last_quote, int *in_quotes, int *count);
-char		*read_line_until_delimiter(char *delimiter, int len);
+char		*read_line_until_delimiter(char *delimiter, int len, int *error);
 char		*handle_dollar_sign(char *input, t_args *arg);
 char		*expand_argument_value(t_args *arg, t_env *env, int *status);
-void		handle_expanded_value(t_command *command, t_args *arg, \
+bool		handle_expanded_value(t_command *command, t_args *arg, \
 char *expanded, int *error);
 void		expand_multi_quoted_args(t_args *arg, t_env *env, int *status);
 int			handle_current_element(t_args **current, t_cmd **current_final);
@@ -294,32 +302,41 @@ void		print_heredoc_delimiters(char **heredoc_delimiters);
 void		print_redirections(char **redir);
 int			process_quoted_arg(t_args *current, t_cmd *current_final, int *i);
 int			process_unquoted_arg(t_args *current, t_cmd *current_final, int *i);
+void		free_command_before(t_command **command);
+void		free_heredoc_delimiters(char **heredoc_delimiters);
+char		*expand_argument_value_multi(t_args *arg, t_env *env, int *status);
+bool		append_to_result_itoa(t_expand *exp, char *temp);
 
 // Prompt
 char		*prompt(int status);
 char		*get_prompt(int status);
+bool		skip_first_rl(void);
 
 // Execution
 int			cmd_len(t_cmd *command);
-t_process	*init_execution(t_process *infos, t_cmd *cmd);
+t_process	*init_execution(t_process *infos, t_cmd *cmd, char **input,
+				t_env *env);
 bool		check_exit(t_cmd *command, int *status);
-bool		get_command(char *command, char **env, char **path);
+int			get_command(char *command, char **env, char **path);
 bool		is_a_builtin(char *cmd);
 bool		exec_builtin(t_cmd *command, int *status, int *pipefd, t_env *env);
-int			execute(t_cmd *command, t_env *env, int status);
+int			execute(t_cmd *command, t_env *env, int status, char **input);
 int			ft_execve(t_cmd *command, t_env *env, int status);
 bool		exec_execve(t_cmd *command, int *pipefd, t_env *env,
 				t_process *infos);
 void		wait_pids(t_process *infos, int *status, int exec);
 
 // Redirections
-int			get_in(t_cmd *command);
-int			get_out(t_cmd *command);
-void		reset_std(t_process *infos);
+int			get_in(t_cmd *command, size_t i, int fd);
+int			get_out(t_cmd *command, size_t i, int fd);
+bool		reset_std(t_process *infos);
+bool		reset_stdin(t_cmd *cmd, t_process *infos);
 
 // Environnement
 t_env		*init_env(char **envp);
+t_env		*reverse_env(t_env *env);
 bool		print_env(t_env *env);
+bool		print_env_reverse(t_env *env);
 t_env		*copy_env(t_env *env);
 bool		set_env(t_env **env, char *name, char *value);
 bool		unset_env(t_env **env, char *name);
@@ -327,21 +344,27 @@ char		**t_env_to_array(t_env *env);
 void		free_env(t_env **env);
 
 // Builtin commands
-int			pwd(void);
+int			pwd(t_cmd *command);
 void		echo(t_cmd *command);
 int			cd(t_cmd *command, t_env *env);
 int			export(t_cmd *command, t_env *env);
+int			unset(t_env **env, char **args);
 
 // Free
 void		free_main(t_cmd **cmd, t_env **env, char **input);
+void		freee(t_cmd **final_cmd);
+void		free_main_no_free_input(t_env **env);
 
-// Error
+// Errors
 int			is_a_dir(char *cmd);
 int			print_error(int type_error, char *str);
 
 // Signals
+bool		handle_signals(int *status);
 bool		check_signal(int *status);
 void		sigint_handler(int sig);
 void		sigquit_handler(int sig);
+void		sigint_handler_child(int sig);
+void		sigint_handler_heredoc(int sig);
 
 #endif

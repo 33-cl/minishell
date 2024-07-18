@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_struct.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 11:50:50 by odx               #+#    #+#             */
-/*   Updated: 2024/07/07 12:01:51 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/18 15:59:01 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	print_final_node(t_cmd *node)
 		printf("Node is NULL\n");
 		return ;
 	}
+	if (node->prev && node->prev->cmd)
+		printf("Prev Node value: %s\n", node->prev->cmd);
 	print_command(node->cmd);
 	print_arguments(node->args);
 	print_heredoc_delimiters(node->heredoc_delimiters);
@@ -113,7 +115,7 @@ void	test_heredoc_pipe(t_cmd *cmd)
 			if (bytes_read >= 0)
 			{
 				buffer[bytes_read] = '\0';
-				printf("Contenu du pipe pour le nœud: %s\n", buffer);
+				printf("Pipe content: %s\n", buffer);
 			}
 			else
 				perror("read");

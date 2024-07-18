@@ -30,7 +30,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		len = len_s - start;
 	new_string = malloc(sizeof(char) * (len + 1));
 	if (!new_string)
-		return (0);
+		return (NULL);
 	while (i < len)
 	{
 		new_string[i] = s[start + i];

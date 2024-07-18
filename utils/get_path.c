@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:42:56 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/17 14:12:50 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/18 16:35:00 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,45 +20,53 @@ static char	*fill_path(char *path, char **possible_paths, char *command, int i)
 	return (path);
 }
 
-static	char	*get_path(char *command, char **env, size_t i)
+static	int	get_path(char *command, char **env, char **path)
 {
-	char	*path;
 	char	**paths;
+	size_t	i;
 
 	i = -1;
 	if (!env || !*env)
-		return (NULL);
+		return (0);
 	while (i++, ft_strncmp(env[i], "PATH", 4))
 		if (!env[i + 1])
-			return (NULL);
+			return (0);
 	paths = ft_split(env[i] + 5, ':');
 	if (!paths)
-		return (ft_free_tab(paths), exit(EXIT_FAILURE), NULL);
+		return (ft_free_tab(paths), -1);
 	i = -1;
 	while (i++, paths[i])
 	{
-		path = malloc(sizeof(char) + ft_strlen(paths[i])
-				+ ft_strlen(command) + 2);
-		if (!path)
-			return (ft_free_tab(paths), exit(EXIT_FAILURE), NULL);
-		path = fill_path(path, paths, command, i);
-		if (!access(path, F_OK))
-			return (ft_free_tab(paths), path);
-		free(path);
+		*path = malloc(sizeof(char)
+				+ ft_strlen(paths[i]) + ft_strlen(command) + 2);
+		if (!*path)
+			return (ft_free_tab(paths), -1);
+		*path = fill_path(*path, paths, command, i);
+		if (!access(*path, F_OK))
+			return (ft_free_tab(paths), 1);
+		free(*path);
 	}
-	return (ft_free_tab(paths), NULL);
+	return (ft_free_tab(paths), 0);
 }
 
-bool	get_command(char *command, char **env, char **path)
+int	get_command(char *command, char **env, char **path)
 {
+	int		return_value;
+
 	if (ft_strchr(command, '/'))
 	{
 		*path = ft_strdup(command);
-		return (*path);
+		if (*path == NULL)
+			return (-1);
+		return (1);
 	}
 	else
 	{
-		*path = get_path(command, env, -1);
-		return (*path);
+		return_value = get_path(command, env, path);
+		if (return_value == 0)
+		{
+			*path = NULL;
+		}
+		return (return_value);
 	}
 }

@@ -6,27 +6,11 @@
 /*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:21:46 by qordoux           #+#    #+#             */
-/*   Updated: 2024/07/07 15:03:14 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 20:32:40 by odx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-/*si le delimiter heredoc est entre double guillemets j'expand il ne faut pas 
-si j'ai le delimiter entre quote je n'expand pas mais moi je vire le dollard 
-alors que je devrais le garder
-ok > $yes < ok > $yes < $yes < $HOME > $yes
-probleme ici je print 2x home
-
-faire les free de clear history
-
-est-ce que j'ai toujpours besoin de free argument?
-void	free_argument(t_args *arg)
-{
-	if (arg->value)
-		free(arg->value);
-	// free(arg);
-} */
 
 bool	init_expand(t_expand *exp, char *input, t_env *env)
 {
@@ -48,7 +32,7 @@ char	*handle_dollar_sign(char *input, t_args *arg)
 		return (ft_strdup("$"));
 	if (ft_strcmp(input, "$") == 0 && (arg->quotes == 0 || arg->quotes == -1) \
 	&& arg->next && (arg->next->quotes == 2 || arg->next->quotes == 1))
-		return (ft_strdup(input + 1));
+		return (ft_strdup(input));
 	return (NULL);
 }
 
@@ -66,24 +50,45 @@ t_args	*remove_empty_argument(t_command *command, t_args *arg)
 	free(arg->value);
 	return (next_arg);
 }
-/*est-ce que je ne dois pas free arg aussi?, cela semble causer des 
-problemes ailleurs*/
 
-void	handle_expanded_value(t_command *command, t_args *arg, char *expanded, \
+bool	handle_expanded_value(t_command *command, t_args *arg, char *expanded, \
 int *error)
 {
 	if (expanded == NULL)
 	{
 		*error = 1;
-		return ;
+		return (true);
 	}
 	if ((ft_strcmp(expanded, "") == 0 && arg == command->args) || \
 	(ft_strcmp(expanded, "") == 0 && arg->prev && arg->prev->type != 3 && \
 	arg->prev->type != 4))
+	{
 		arg = remove_empty_argument(command, arg);
+		return (false);
+	}
 	else
 	{
 		free(arg->value);
-		arg->value = expanded;
+		arg->value = ft_strdup(expanded);
+	}
+	return (true);
+}
+
+void	expand_multi_quoted_args(t_args *arg, t_env *env, int *status)
+{
+	t_args	*current_multi_quoted_arg;
+	char	*expanded;
+
+	current_multi_quoted_arg = arg->multi_quoted_args;
+	while (current_multi_quoted_arg != NULL)
+	{
+		if (current_multi_quoted_arg->quotes != 1)
+		{
+			expanded = expand_argument_value_multi(current_multi_quoted_arg, \
+			env, status);
+			free(current_multi_quoted_arg->value);
+			current_multi_quoted_arg->value = expanded;
+		}
+		current_multi_quoted_arg = current_multi_quoted_arg->next;
 	}
 }

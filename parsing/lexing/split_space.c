@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_space.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 11:53:24 by odx               #+#    #+#             */
-/*   Updated: 2024/07/05 13:43:06 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 22:47:08 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ bool	split_for_multi_quoted(char *str, t_args *args)
 
 	nb_words = count_nodes(str);
 	if (nb_words > 1)
-		split_into_new_nodes(str, args);
+	{
+		if (!split_into_new_nodes(str, args))
+			return (false);
+	}
 	return (true);
 }
 
@@ -75,7 +78,8 @@ t_args **last_arg, t_command *current)
 		return (false);
 	if (ft_strcmp(new_arg->value, "<<") == 0)
 		command->nb_heredocs++;
-	split_for_multi_quoted(new_arg->value, new_arg);
+	if (!split_for_multi_quoted(new_arg->value, new_arg))
+		return (false);
 	if (!new_arg->value)
 	{
 		free(new_arg);

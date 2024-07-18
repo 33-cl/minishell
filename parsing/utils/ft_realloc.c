@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 23:32:39 by odx               #+#    #+#             */
-/*   Updated: 2024/07/07 00:35:18 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 22:46:35 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 int	realloc_args_array(t_args *current, t_cmd *current_final)
 {
-	int	len;
+	int		len;
 
 	len = ft_lstsize_final(current);
-	current_final->args = ft_realloc_string_array_final \
-	(current_final->args, len + 1);
+	current_final->args = ft_realloc_string_array_final (current_final->args, \
+	len + 1);
 	if (current_final->args == NULL)
 	{
 		return (2);
@@ -39,6 +39,7 @@ void	*ft_realloc_old_size(void *ptr, size_t old_size, size_t new_size)
 	new_ptr = malloc(new_size);
 	if (new_ptr == NULL)
 	{
+		free(ptr);
 		return (NULL);
 	}
 	if (ptr != NULL)

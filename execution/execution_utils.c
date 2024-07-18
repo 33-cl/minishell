@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 12:38:43 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/03 17:02:29 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/18 15:48:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@
 	Returns a bool for malloc() error
 */
 
-t_process	*init_execution(t_process *infos, t_cmd *cmd)
+t_process	*init_execution(t_process *infos, t_cmd *cmd
+	, char **input, t_env *env)
 {
 	infos = malloc(sizeof(t_process) * 1);
 	if (!infos)
 		return (NULL);
+	infos->piped = false;
+	infos->input = *input;
 	infos->nb_pids = 0;
 	cmd->redir_out = false;
 	infos->pids = malloc(sizeof(int) * cmd_len(cmd));
@@ -33,6 +36,8 @@ t_process	*init_execution(t_process *infos, t_cmd *cmd)
 	infos->stdout = dup(STDOUT_FILENO);
 	if (!infos->stdout)
 		return (free(infos->pids), close(infos->stdin), NULL);
+	cmd->exec = NONE;
+	infos->env = env;
 	return (infos);
 }
 

@@ -6,7 +6,7 @@
 /*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 14:07:05 by odx               #+#    #+#             */
-/*   Updated: 2024/07/05 15:04:26 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 20:23:46 by odx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	add_heredoc_delimiter(t_command *command, t_args *args)
 		{
 			if (!realloc_temp(command, i))
 				return (false);
-			command->heredoc_delimiters[i] = current->value;
+			command->heredoc_delimiters[i] = ft_strdup(current->value);
 			i++;
 			command->heredoc_delimiters[i] = NULL;
 		}

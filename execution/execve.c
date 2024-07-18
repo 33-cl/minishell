@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 22:28:29 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/09 02:52:33 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/18 16:43:09 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 
 	final_env = t_env_to_array(env);
 	if (!final_env)
-		exit(-1);
+		return (free_final_list(&cmd), ft_free_tab(final_env), exit(status), 0);
 	get_command(cmd->args[0], final_env, &path);
 	if (path)
 	{
@@ -47,11 +47,12 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 
 static bool	child_process(t_cmd *cmd, int *pipefd, t_env *env, t_process *infos)
 {
-	signal(SIGQUIT, SIG_DFL);
-	// ft_free_tab(cmd->heredoc_delimiters);
 	free(infos->pids);
+	free(infos->input);
+	rl_clear_history();
 	close(infos->stdin);
 	close(infos->stdout);
+	free(infos);
 	if (cmd->next != NULL && !cmd->redir_out)
 	{
 		close(pipefd[0]);
@@ -71,6 +72,12 @@ static bool	child_process(t_cmd *cmd, int *pipefd, t_env *env, t_process *infos)
 bool	exec_execve(t_cmd *command, int *pipefd, t_env *env, t_process *infos)
 {
 	command->exec = EXECVE;
+	if (!ft_strrchr(command->args[0], '/')
+		|| ft_strcmp(ft_strrchr(command->args[0], '/'), "/minishell"))
+	{
+		signal(SIGQUIT, sigquit_handler);
+		signal(SIGINT, sigint_handler_child);
+	}
 	infos->pids[infos->nb_pids] = fork();
 	if (infos->pids[infos->nb_pids] == -1)
 		return (false);

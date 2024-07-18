@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 17:02:20 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/03 16:56:46 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/17 22:44:33 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,23 @@ bool	is_a_builtin(char *cmd)
 bool	builtin_handler(t_cmd *command, t_env *env, int *status)
 {
 	if (!ft_strcmp(command->args[0], "echo"))
+	{
+		*status = 0;
 		echo(command);
+	}
 	else if (!ft_strcmp(command->args[0], "cd"))
 		*status = cd(command, env);
 	else if (!ft_strcmp(command->args[0], "pwd"))
-		*status = pwd();
+		*status = pwd(command);
 	else if (!ft_strcmp(command->args[0], "export"))
 		*status = export(command, env);
 	else if (!ft_strcmp(command->args[0], "unset"))
-		*status = unset_env(&env, command->args[1]);
+		*status = unset(&env, command->args);
 	else if (!ft_strcmp(command->args[0], "env"))
+	{
+		*status = 0;
 		print_env(env);
+	}
 	return (*status != -1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 15:41:19 by maeferre          #+#    #+#             */
-/*   Updated: 2024/06/20 17:55:48 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/17 23:20:37 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <stdio.h>
 
 // Libft project mandatory
 size_t	ft_strlen(const char *s);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils_a.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 10:42:32 by odx               #+#    #+#             */
-/*   Updated: 2024/07/09 02:43:23 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/10 17:11:22 by qordoux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	free_command(t_command **command)
 		if (current->args)
 			free_args(&current->args);
 		if (current->heredoc_delimiters)
-			ft_free_tab(current->heredoc_delimiters);
+			free_heredoc_delimiters(current->heredoc_delimiters);
 		if (current->redir)
 			free_redirections(current->redir);
 		free(current);
@@ -47,9 +47,6 @@ void	free_command(t_command **command)
 	}
 	*command = NULL;
 }
-
-/*if (current->heredoc_delimiters)
-	free_heredoc_delimiters(current->heredoc_delimiters);*/
 
 void	free_command_before(t_command **command)
 {
@@ -65,7 +62,7 @@ void	free_command_before(t_command **command)
 		if (current->args)
 			free_args(&current->args);
 		if (current->heredoc_delimiters)
-			ft_free_tab(current->heredoc_delimiters);
+			free(current->heredoc_delimiters);
 		if (current->redir)
 			free_redirections(current->redir);
 		free(current);

@@ -3,25 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:56:15 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/03 17:09:12 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/17 23:16:34 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /*
-	Reinitilizes in and out
+	Reinitializes in
 */
 
-void	reset_std(t_process *infos)
+bool	reset_stdin(t_cmd *cmd, t_process *infos)
 {
-	dup2(infos->stdin, STDIN_FILENO);
-	close(infos->stdin);
-	dup2(infos->stdout, STDOUT_FILENO);
+	cmd->redir_out = 0;
+	if (dup2(infos->stdin, STDOUT_FILENO) == -1)
+		return (false);
 	close(infos->stdout);
+	return (true);
+}
+
+/*
+	Reinitializes in and out
+*/
+
+bool	reset_std(t_process *infos)
+{
+	if (dup2(infos->stdin, STDIN_FILENO) == -1)
+		return (false);
+	close(infos->stdin);
+	if (dup2(infos->stdout, STDOUT_FILENO) == -1)
+		return (false);
+	close(infos->stdout);
+	return (true);
 }
 
 /*
@@ -51,15 +67,11 @@ int	open_type(t_cmd *command, char *file_name, char type, int *fd)
 	Updates the in
 */
 
-int	get_in(t_cmd *command)
+int	get_in(t_cmd *command, size_t i, int fd)
 {
-	size_t	i;
 	size_t	len_in;
 	char	type;
-	int		fd;
 
-	i = -1;
-	fd = -1;
 	len_in = ft_tablen(command->redir);
 	if (len_in == 0)
 		return (0);
@@ -69,11 +81,15 @@ int	get_in(t_cmd *command)
 		command->redir[i]++;
 		if (type == '<' || type == '-')
 			if (open_type(command, command->redir[i], type, &fd) == -1)
-				return (-1);
+				return (command->redir[i]--, -1);
 		command->redir[i]--;
 	}
 	if (fd != -1)
-		return (dup2(fd, STDIN_FILENO), close(fd), 0);
+	{
+		if (dup2(fd, STDIN_FILENO) == -1)
+			return (-1);
+		close(fd);
+	}
 	return (0);
 }
 
@@ -81,15 +97,11 @@ int	get_in(t_cmd *command)
 	Updates the out
 */
 
-int	get_out(t_cmd *command)
+int	get_out(t_cmd *command, size_t i, int fd)
 {
-	size_t	i;
 	size_t	len_out;
 	char	type;
-	int		fd;
 
-	i = -1;
-	fd = -1;
 	len_out = ft_tablen(command->redir);
 	if (len_out == 0)
 		return (0);
@@ -100,12 +112,16 @@ int	get_out(t_cmd *command)
 		if (type == '>' || type == '+')
 		{
 			if (open_type(command, command->redir[i], type, &fd) == -1)
-				return (-1);
+				return (command->redir[i]--, -1);
 			command->redir_out = true;
 		}
 		command->redir[i]--;
 	}
 	if (fd != -1)
-		return (dup2(fd, STDOUT_FILENO), close(fd), 0);
+	{
+		if (dup2(fd, STDOUT_FILENO) == -1)
+			return (-1);
+		close(fd);
+	}
 	return (0);
 }

@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:49:26 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/03 16:56:21 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/18 15:55:58 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 /*
-	Les noms de variables d'environnement sont soumis a certaines conditions
 	Environnement variables names are restricted
 
 	Authorized chars :

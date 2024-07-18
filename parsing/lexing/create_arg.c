@@ -6,7 +6,7 @@
 /*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 12:23:21 by odx               #+#    #+#             */
-/*   Updated: 2024/07/05 12:23:23 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 19:47:33 by odx              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ t_args	*create_new_arg(const char *str, unsigned int start, size_t length)
 
 	new_arg = malloc(sizeof(t_args));
 	if (!new_arg)
+	{
 		return (NULL);
+	}
 	new_arg->quotes = -1;
 	new_arg->type = -1;
 	new_arg->value = ft_substr(str, start, length);

@@ -3,42 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/23 13:39:25 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/03 17:23:03 by debian           ###   ########.fr       */
+/*   Created: 2024/07/13 18:51:46 by maeferre          #+#    #+#             */
+/*   Updated: 2024/07/15 13:45:31 by qordoux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	g_signal = 0;
+bool	handle_signals(int *status)
+{
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	if (check_signal(status))
+		return (true);
+	return (false);
+}
 
 bool	check_signal(int *status)
 {
-	if (g_signal == INT)
+	if (g_signal == INT_C)
+	{
+		*status = 130;
+		g_signal = 0;
+		return (true);
+	}
+	else if (g_signal == QUIT)
+	{
+		*status = 131;
+		g_signal = 0;
+		return (true);
+	}
+	else if (g_signal == INT)
 	{
 		*status = 130;
 		g_signal = 0;
 		return (true);
 	}
 	return (false);
-}
-
-void	sigint_handler(int sig)
-{
-	(void)sig;
-	ioctl(STDIN_FILENO, TIOCSTI, "\n");
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	g_signal = INT;
-	rl_done = 1;
-}
-
-void	sigquit_handler(int sig)
-{
-	(void)sig;
-	write(2, "Quit (core dumped)\n", 19);
-	signal(SIGQUIT, SIG_DFL);
-	kill(getpid(), SIGQUIT);
 }

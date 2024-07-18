@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_redirection.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 21:10:23 by odx               #+#    #+#             */
-/*   Updated: 2024/07/07 00:32:01 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/18 15:04:34 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*remove_dollar_sign(char *str)
 	int		j;
 	char	*new_str;
 
-	new_str = malloc(strlen(str) + 1);
+	new_str = malloc(ft_strlen(str) + 1);
 	if (!new_str)
 		return (NULL);
 	i = 0;

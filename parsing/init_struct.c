@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 18:13:57 by qordoux           #+#    #+#             */
-/*   Updated: 2024/07/07 16:08:36 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/17 22:07:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,7 @@ int	initialize_struct(t_command *command, char *input)
 	if (!syntax_error(command))
 		return (2);
 	if (!add_heredoc_delimiter(command, command->args))
-	{
 		return (1);
-	}
 	remove_quotes_in_delimiter(command);
 	return (0);
 }
@@ -50,10 +48,9 @@ int	finalize_struct(t_command *command, t_env *env, int *status)
 	int	error;
 
 	error = 0;
-	if (!heredoc_init(command))
-	{
+	heredoc_init(command, &error);
+	if (error == 1)
 		return (1);
-	}
 	command = replace_expand(command, env, status, &error);
 	if (error == 1 || *status == -1)
 		return (1);
