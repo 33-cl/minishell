@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/18 15:55:16 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/19 00:55:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 			return (free_main(&cmd, &env, &input), 1);
 		if (status == 2)
 			continue ;
-		if (input[0] != '\0' && check_exit(cmd, &old_status))
+		if (input && input[0] != '\0' && check_exit(cmd, &old_status))
 			return (free_final_list(&cmd), rl_clear_history(), free_env(&env),
 				free(input), old_status);
 		else if (input[0] != '\0')
 			status = execute(cmd, env, status, &input);
 		if (free_final_list(&cmd), status == -1 || status == 255)
 			return (free_main(&cmd, &env, &input), 1);
-		free(input);
+		if (input)
+			free(input);
 		old_status = status;
 	}
 }

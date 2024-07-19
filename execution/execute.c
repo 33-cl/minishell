@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:30:04 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/18 15:43:56 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/19 01:43:31 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,19 @@ static int	run_command(t_cmd *cmd, int *status, t_env *env, t_process *infos)
 {
 	int	pipefd[2];
 
-	if (cmd->args[0] != NULL)
+	if (cmd->next != NULL)
+		if (pipe(pipefd) == -1)
+			return (-1);
+	if (!cmd->args || !cmd->args[0] || is_a_builtin(cmd->args[0]))
 	{
-		if (cmd->next != NULL)
-			if (pipe(pipefd) == -1)
-				return (-1);
-		if (is_a_builtin(cmd->args[0]))
-		{
-			if (!exec_builtin(cmd, status, pipefd, env))
-				return (-1);
-		}
-		else
-			if (cmd->args[0] != NULL && !exec_execve(cmd, pipefd, env, infos))
-				return (-1);
-		if (cmd->next == NULL)
-			close(STDIN_FILENO);
+		if (!exec_builtin(cmd, status, pipefd, env))
+			return (-1);
 	}
+	else
+		if (cmd->args[0] != NULL && !exec_execve(cmd, pipefd, env, infos))
+			return (-1);
+	if (cmd->next == NULL)
+		close(STDIN_FILENO);
 	if (cmd->redir_out)
 		if (!reset_stdin(cmd, infos))
 			return (-1);
@@ -58,6 +55,7 @@ int	execute(t_cmd *command, t_env *env, int status, char **input)
 		{
 			status = 1;
 			command = command->next;
+			// reset_std(infos);
 			continue ;
 		}
 		if (run_command(command, &status, env, infos) == -1)
