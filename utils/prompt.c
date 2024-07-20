@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 23:09:17 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/20 23:05:17 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,21 @@
 	/home/maeferre/Desktop/minishell
 */
 
-char	*prompt(int *status)
+bool	prompt(int *status, char **input)
 {
 	char	*prompt;
-	char	*input;
 
-	input = NULL;
+	*input = NULL;
 	prompt = get_prompt(status);
 	if (!prompt)
 		return (ft_putstr_fd("error : current working directory has been deleted\n", 2),
-			*status = 1, NULL);
-	// printf("input : |%s|\n", input);
-	input = readline(prompt);
-	// printf("input : |%s|\n", input);
-	if (input == NULL)
-		return (free(prompt), NULL);
-	if (ft_strcmp(input, "\0") != 0)
-		add_history(input);
+			*status = 1, false);
+	*input = readline(prompt);
+	if (*input && !strcmp(*input, "\0"))
+		return (free(prompt), false);
+	add_history(*input);
 	free(prompt);
-	return (input);
+	return (true);
 }
 
 char	*get_prompt(int *status)
@@ -46,6 +42,7 @@ char	*get_prompt(int *status)
 	char	*cwd;
 	char	*final_cwd;
 
+	(void)status;
 	if (*status == 0)
 		command = ft_strdup("\001\033[0;32m\002♦ \001\033[1;35m\002");
 	else
