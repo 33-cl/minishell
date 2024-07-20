@@ -6,7 +6,7 @@
 #    By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/17 12:55:56 by qordoux           #+#    #+#              #
-#    Updated: 2024/07/18 16:06:07 by maeferre         ###   ########.fr        #
+#    Updated: 2024/07/19 21:22:41 by maeferre         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ $(BUILD_DIR)/%.o: %.c minishell.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(LIBS) $(OBJ)
-	$(CC) $(OBJ) $(LIBS) $(CFLAGS) -lreadline -o $(NAME)
+	$(CC) $(OBJ) $(LIBS) $(CFLAGS) -o $(NAME) -lreadline
 	@echo "\033[1;32mMinishell Created!\n"
 
 $(LIBFT)/libft.a : FORCE

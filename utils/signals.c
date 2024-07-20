@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 18:51:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 00:44:32 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/19 20:55:49 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 bool	handle_signals(int *status)
 {
+	(void)status;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	if (check_signal(status))
-		return (true);
+	// if (check_signal(status))
+	// 	return (true);
 	return (false);
 }
 

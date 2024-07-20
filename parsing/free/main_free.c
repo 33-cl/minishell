@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_free.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 10:38:36 by odx               #+#    #+#             */
-/*   Updated: 2024/07/09 17:59:42 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/19 20:46:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	free_final_list(t_cmd **final_cmd)
 	if (*final_cmd == NULL)
 		return ;
 	current = *final_cmd;
+	while (current->prev != NULL)
+		current = current->prev;
 	while (current != NULL)
 	{
 		next = current->next;

@@ -6,21 +6,31 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 00:55:43 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/19 23:01:51 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
+	- Probleme de init_execution au lancement sans l'environnement
+	- Creer la chaine cmd dans le cas ou on met entree en commentaire pour ne pas segfault
+*/
 
 #include "minishell.h"
 
 int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 {
 	char	*input;
+	char	*pwd;
 
+	cmd = NULL;
+	(void)pwd;
 	while (1)
-	{
+	{	
 		if (handle_signals(&status))
 			continue ;
-		input = prompt(status);
+		input = prompt(&status);
+		if (check_signal(&status))
+			continue ;
 		if (!input)
 			return (printf("exit\n"), rl_clear_history(),
 				free_main(&cmd, &env, &input), status);

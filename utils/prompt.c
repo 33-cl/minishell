@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 00:55:39 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/19 23:09:17 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 	/home/maeferre/Desktop/minishell
 */
 
-char	*prompt(int status)
+char	*prompt(int *status)
 {
 	char	*prompt;
 	char	*input;
@@ -27,8 +27,11 @@ char	*prompt(int status)
 	input = NULL;
 	prompt = get_prompt(status);
 	if (!prompt)
-		return (NULL);
+		return (ft_putstr_fd("error : current working directory has been deleted\n", 2),
+			*status = 1, NULL);
+	// printf("input : |%s|\n", input);
 	input = readline(prompt);
+	// printf("input : |%s|\n", input);
 	if (input == NULL)
 		return (free(prompt), NULL);
 	if (ft_strcmp(input, "\0") != 0)
@@ -37,13 +40,13 @@ char	*prompt(int status)
 	return (input);
 }
 
-char	*get_prompt(int status)
+char	*get_prompt(int *status)
 {
 	char	*command;
 	char	*cwd;
 	char	*final_cwd;
 
-	if (status == 0)
+	if (*status == 0)
 		command = ft_strdup("\001\033[0;32m\002♦ \001\033[1;35m\002");
 	else
 		command = ft_strdup("\001\033[0;31m\002♦ \001\033[1;35m\002");
