@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 12:38:43 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/21 18:30:01 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 20:50:40 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_process	*init_execution(t_process *infos, t_cmd *cmd
 	infos->input = *input;
 	infos->nb_pids = 0;
 	cmd->redir_out = false;
-	infos->pids = malloc(sizeof(int) * cmd_len(cmd));
+	infos->pids = malloc(sizeof(int) * (cmd_len(cmd) + 1));
 	if (!infos->pids)
 		return (NULL);
 	infos->stdin = dup(STDIN_FILENO);

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 22:28:29 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 00:42:52 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 21:26:18 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,15 @@ int	ft_execve(t_cmd *cmd, t_env *env, int status)
 
 static bool	child_process(t_cmd *cmd, int *pipefd, t_env *env, t_process *infos)
 {
-	free(infos->pids);
-	free(infos->input);
+	if (infos->pids)
+		free(infos->pids);
+	if (infos->input)
+		free(infos->input);
 	rl_clear_history();
 	close(infos->stdin);
 	close(infos->stdout);
-	free(infos);
+	if (infos)
+		free(infos);
 	if (cmd->next != NULL && !cmd->redir_out)
 	{
 		close(pipefd[0]);

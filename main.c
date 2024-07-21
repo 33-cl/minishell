@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/21 17:51:46 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 18:38:37 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,11 @@
 int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 {
 	char	*input;
-	char	*pwd;
 
 	cmd = NULL;
 	input = NULL;
-	(void)pwd;
 	while (1)
-	{	
+	{
 		if (handle_signals(&status))
 			continue ;
 		if (check_signal(&status) || !prompt(&status, &input))
