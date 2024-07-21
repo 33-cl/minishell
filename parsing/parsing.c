@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 17:15:14 by qordoux           #+#    #+#             */
-/*   Updated: 2024/07/19 00:38:21 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 18:26:01 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,6 @@ t_cmd	*parsing(char *input, t_env *env, int *status, int *old_status)
 	if (*status != 0 && *status != 130)
 	{
 		*old_status = *status;
-		if (input)
-			free(input);
-		input = NULL;
 		free_final_list(&final_cmd);
 	}
 	return (final_cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils_a.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qordoux <qordoux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 10:42:32 by odx               #+#    #+#             */
-/*   Updated: 2024/07/10 17:11:22 by qordoux          ###   ########.fr       */
+/*   Updated: 2024/07/21 17:50:40 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,7 @@ void	free_everything(t_command *command, char *input, t_env *env)
 	free_final_list(&command->final_cmd);
 	free_command_before(&command);
 	free_env(&env);
-	free(input);
+	if (input)
+		free(input);
+	input = NULL;
 }

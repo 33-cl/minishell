@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/20 22:58:35 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/20 23:17:43 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,7 +308,7 @@ char		*expand_argument_value_multi(t_args *arg, t_env *env, int *status);
 bool		append_to_result_itoa(t_expand *exp, char *temp);
 
 // Prompt
-bool		prompt(int *status, char **input);
+int			prompt(int *status, char **input);
 char		*get_prompt(int *status);
 bool		skip_first_rl(void);
 

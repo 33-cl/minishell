@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:30:04 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 21:17:33 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 18:29:20 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	execute(t_cmd *command, t_env *env, int status, char **input)
 
 	infos = init_execution(NULL, command, input, env);
 	if (!infos)
-		return (reset_std(infos), -1);
+		return (-1);
 	while (command != NULL)
 	{
 		command->exec = NONE;

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 16:38:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/17 23:28:32 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/21 17:51:11 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ t_env	*copy_env(t_env *env)
 	new_node = (t_env *)malloc(sizeof(t_env));
 	if (!new_node)
 		return (NULL);
-	new_node->name = strdup(env->name);
-	new_node->value = strdup(env->value);
+	new_node->name = ft_strdup(env->name);
+	new_node->value = ft_strdup(env->value);
 	new_node->next = copy_env(env->next);
 	if (new_node->next)
 		new_node->next->prev = new_node;
