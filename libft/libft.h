@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 15:41:19 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/17 23:20:37 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 02:54:07 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	*ft_bzero(void *s, size_t n);
 int		ft_isalnum(int c);
 bool	ft_isnumber(const char *str);
 int		ft_isalpha(int c);
+bool	ft_isallspace(char *str);
 int		ft_isascii(int c);
 int		ft_isdigit(int c);
 int		ft_isprint(int c);

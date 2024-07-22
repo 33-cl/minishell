@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: debian <debian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:11:59 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/08 20:23:42 by debian           ###   ########.fr       */
+/*   Updated: 2024/07/22 05:29:19 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,11 @@
 
 int	is_a_dir(char *cmd)
 {
-	size_t	i;
+	struct stat	st;
 
-	i = 0;
-	while (cmd[i])
-	{
-		if (cmd[i] != '.' && cmd[i] != '/')
-			return (0);
-		if (cmd[i] == '.' && cmd[i + 1] && cmd[i + 1] == '.'
-			&& cmd[i + 2] && cmd[i + 2] == '.')
-			return (0);
-		i++;
-	}
-	return (1);
+	if (stat(cmd, &st) == -1)
+		return (0);
+	return (S_ISDIR(st.st_mode));
 }
 
 /*
@@ -56,5 +48,7 @@ int	print_error(int type_error, char *str)
 		return (write(2, " : too many arguments\n", 22), 1);
 	else if (type_error == NOT_VALID_ID)
 		return (write(2, "': not a valid identifier\n", 26), 1);
+	else if (type_error == NOT_SET)
+		return (write(2, "not set\n", 8), 1);
 	return (0);
 }

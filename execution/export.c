@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:49:26 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/18 15:55:58 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:24:02 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ static t_env	*sort_env(t_env *env)
 		sorted = insert_sorted_desc(sorted, current);
 		current = next;
 	}
-	free(current);
 	return (sorted);
 }
 
@@ -123,7 +122,7 @@ static int	add_variable_to_env(char *arg, t_env *env)
 	value = ft_strchr(arg, '=');
 	if (value)
 		value++;
-	if (!set_env(&env, name, value))
+	if (!set_env_export(&env, name, value))
 		return (free(name), -1);
 	free(name);
 	return (0);
@@ -133,18 +132,27 @@ int	export(t_cmd *command, t_env *env)
 {
 	int		nb_args;
 	int		i;
+	t_env	*sorted_env;
 
 	nb_args = ft_tablen(command->args);
 	if (nb_args == 1)
-		return (!print_env(sort_env(env)) * -1);
+	{
+		sorted_env = sort_env(env);
+		print_env(sorted_env);
+		free_env(&sorted_env);
+		return (0);
+	}
 	if (!parsing_export(command, nb_args))
 		return (1);
 	i = 1;
-	while (command->args[i])
+	if (command->prev == NULL && command->next == NULL)
 	{
-		if (add_variable_to_env(command->args[i], env) == -1)
-			return (-1);
-		i++;
+		while (command->args[i])
+		{
+			if (add_variable_to_env(command->args[i], env) == -1)
+				return (-1);
+			i++;
+		}
 	}
 	return (0);
 }

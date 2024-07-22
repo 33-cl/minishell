@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 02:44:20 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/17 22:32:00 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:30:08 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,34 @@ static bool	update_env_value(t_env *current, char *name, char *value)
 		return (true);
 	}
 	return (false);
+}
+
+bool	set_env_export(t_env **env, char *name, char *value)
+{
+	t_env	*current;
+	t_env	*new_node;
+
+	if (!env || !name)
+		return (false);
+	if (!value)
+		return (true);
+	current = *env;
+	while (current != NULL)
+	{
+		if (update_env_value(current, name, value))
+			return (true);
+		if (current->next == NULL)
+			break ;
+		current = current->next;
+	}
+	new_node = create_new_node(name, value);
+	if (!new_node)
+		return (false);
+	if (current == NULL)
+		*env = new_node;
+	else
+		current->next = new_node;
+	return (true);
 }
 
 bool	set_env(t_env **env, char *name, char *value)

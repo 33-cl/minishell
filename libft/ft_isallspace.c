@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   ft_isallspace.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/13 01:55:24 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/22 04:00:25 by maeferre         ###   ########.fr       */
+/*   Created: 2024/07/22 02:50:44 by maeferre          #+#    #+#             */
+/*   Updated: 2024/07/22 05:29:48 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-int	unset(t_env **env, char **args)
+bool	ft_isallspace(char *str)
 {
-	int	i;
-	int	temp_status;
+	size_t	i;
 
-	i = 1;
-	while (args[i])
-	{
-		temp_status = set_env(env, args[i], NULL);
-		if (!temp_status)
-			return (0);
-		i++;
-	}
-	return (0);
+	i = -1;
+	while (i++, str[i])
+		if (!ft_is_space(str[i]))
+			return (false);
+	return (true);
 }

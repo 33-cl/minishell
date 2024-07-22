@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_get_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odx <odx@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 22:22:20 by odx               #+#    #+#             */
-/*   Updated: 2024/07/17 20:32:11 by odx              ###   ########.fr       */
+/*   Updated: 2024/07/22 05:08:08 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_env	*init_env(char **envp)
 		}
 		if (!new_node->name || !new_node->value)
 		{
-			free (new_node);
+			free(new_node);
 			continue ;
 		}
 		new_node->next = current;

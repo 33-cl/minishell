@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/21 18:38:37 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:43:14 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@ int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 {
 	char	*input;
 
-	cmd = NULL;
 	input = NULL;
 	while (1)
 	{
-		if (handle_signals(&status))
+		if (handle_signals_and_reset(&status, &input, &old_status))
 			continue ;
 		if (check_signal(&status) || !prompt(&status, &input))
 			continue ;
@@ -43,10 +42,6 @@ int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 			status = execute(cmd, env, status, &input);
 		if (free_final_list(&cmd), status == -1 || status == 255)
 			return (free_main(&cmd, &env, &input), 1);
-		if (input)
-			free(input);
-		input = NULL;
-		old_status = status;
 	}
 }
 

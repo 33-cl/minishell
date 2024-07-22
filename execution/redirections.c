@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:56:15 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/17 23:16:34 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:32:58 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int	get_in(t_cmd *command, size_t i, int fd)
 		return (0);
 	while (i++, i < len_in)
 	{
+		if (fd != -1)
+			close(fd);
 		type = command->redir[i][0];
 		command->redir[i]++;
 		if (type == '<' || type == '-')
@@ -103,10 +105,10 @@ int	get_out(t_cmd *command, size_t i, int fd)
 	char	type;
 
 	len_out = ft_tablen(command->redir);
-	if (len_out == 0)
-		return (0);
 	while (i++, i < len_out)
 	{
+		if (fd != -1)
+			close(fd);
 		type = command->redir[i][0];
 		command->redir[i]++;
 		if (type == '>' || type == '+')

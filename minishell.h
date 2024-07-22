@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/20 23:17:43 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:43:08 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 # include <sys/wait.h>
 # include <sys/ioctl.h>
+# include <sys/stat.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -45,6 +46,7 @@ extern int	g_signal;
 # define ERROR_NEWLINE "syntax error near unexpected token `newline'"
 # define UNSET_NO_ARGS "unset: not enough arguments\n"
 # define FAR ": filename argument required\n.: usage: . filename [arguments]\n"
+# define CWD_DELETED "error : current working directory has been deleted\n"
 
 typedef enum e_signal
 {
@@ -63,7 +65,8 @@ typedef enum e_error_type
 	ARGUMENT_REQUIRED,
 	PERMISSION_DENIED,
 	TOO_MANY_ARGS,
-	NOT_VALID_ID
+	NOT_VALID_ID,
+	NOT_SET
 }	t_error_type;
 
 typedef enum e_exec_type
@@ -339,6 +342,7 @@ bool		print_env(t_env *env);
 bool		print_env_reverse(t_env *env);
 t_env		*copy_env(t_env *env);
 bool		set_env(t_env **env, char *name, char *value);
+bool		set_env_export(t_env **env, char *name, char *value);
 bool		unset_env(t_env **env, char *name);
 char		**t_env_to_array(t_env *env);
 void		free_env(t_env **env);
@@ -360,7 +364,7 @@ int			is_a_dir(char *cmd);
 int			print_error(int type_error, char *str);
 
 // Signals
-bool		handle_signals(int *status);
+bool		handle_signals_and_reset(int *status, char **input, int *old_status);
 bool		check_signal(int *status);
 void		sigint_handler(int sig);
 void		sigquit_handler(int sig);

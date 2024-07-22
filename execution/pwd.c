@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 18:16:24 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/15 01:40:33 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 03:53:51 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,10 @@ int	pwd(t_cmd *cmd)
 		ft_putstr_fd(": invalid option\n", 2);
 		return (2);
 	}
-	else
-	{
-		cwd = getcwd(NULL, 0);
-		if (!cwd)
-			return (1);
-		printf("%s\n", cwd);
-		free(cwd);
-	}
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+		return (1);
+	printf("%s\n", cwd);
+	free(cwd);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 17:02:20 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/21 19:06:17 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:34:39 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ bool	is_a_builtin(char *cmd)
 
 static bool	builtin_handler(t_cmd *cmd, t_env *env, int *status)
 {
-	
 	if (cmd->args && cmd->args[0] != NULL)
 	{
 		if (!ft_strcmp(cmd->args[0], "echo"))
@@ -41,13 +40,13 @@ static bool	builtin_handler(t_cmd *cmd, t_env *env, int *status)
 			*status = 0;
 			echo(cmd);
 		}
-		else if (!ft_strcmp(cmd->args[0], "cd"))
+		else if (!cmd->prev && !cmd->next && !ft_strcmp(cmd->args[0], "cd"))
 			*status = cd(cmd, env);
 		else if (!ft_strcmp(cmd->args[0], "pwd"))
 			*status = pwd(cmd);
 		else if (!ft_strcmp(cmd->args[0], "export"))
 			*status = export(cmd, env);
-		else if (!ft_strcmp(cmd->args[0], "unset"))
+		else if (!cmd->prev && !cmd->next && !ft_strcmp(cmd->args[0], "unset"))
 			*status = unset(&env, cmd->args);
 		else if (!ft_strcmp(cmd->args[0], "env"))
 		{

@@ -6,19 +6,21 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 18:51:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/19 20:55:49 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:44:41 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	handle_signals(int *status)
+bool	handle_signals_and_reset(int *status, char **input, int *old_status)
 {
 	(void)status;
+	*old_status = *status;
+	if (*input)
+		free(*input);
+	*input = NULL;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	// if (check_signal(status))
-	// 	return (true);
 	return (false);
 }
 

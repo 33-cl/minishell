@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 16:51:41 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/21 17:56:50 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 05:26:53 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 	/home/maeferre/Desktop/minishell
 */
 
-int		prompt(int *status, char **input)
+int	prompt(int *status, char **input)
 {
 	char	*prompt;
 
@@ -28,10 +28,10 @@ int		prompt(int *status, char **input)
 	*input = NULL;
 	prompt = get_prompt(status);
 	if (!prompt)
-		return (ft_putstr_fd("error : current working directory has been deleted\n", 2),
+		return (ft_putstr_fd(CWD_DELETED, 2),
 			*status = -1, -1);
 	*input = readline(prompt);
-	if (*input && !strcmp(*input, "\0"))
+	if (*input && (!strcmp(*input, "\0") || ft_isallspace(*input)))
 		return (free(prompt), 0);
 	add_history(*input);
 	free(prompt);
