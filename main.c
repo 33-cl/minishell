@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:26:30 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/22 05:43:14 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 10:42:47 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	loop(t_env *env, t_cmd *cmd, int status, int old_status)
 	input = NULL;
 	while (1)
 	{
-		if (handle_signals_and_reset(&status, &input, &old_status))
+		if (handle_signals_n_reset(&status, &input, &old_status))
 			continue ;
 		if (check_signal(&status) || !prompt(&status, &input))
 			continue ;

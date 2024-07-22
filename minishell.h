@@ -6,7 +6,7 @@
 /*   By: maeferre <maeferre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:30:46 by maeferre          #+#    #+#             */
-/*   Updated: 2024/07/22 05:43:08 by maeferre         ###   ########.fr       */
+/*   Updated: 2024/07/22 10:42:19 by maeferre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,7 +364,7 @@ int			is_a_dir(char *cmd);
 int			print_error(int type_error, char *str);
 
 // Signals
-bool		handle_signals_and_reset(int *status, char **input, int *old_status);
+bool		handle_signals_n_reset(int *status, char **input, int *old_status);
 bool		check_signal(int *status);
 void		sigint_handler(int sig);
 void		sigquit_handler(int sig);
